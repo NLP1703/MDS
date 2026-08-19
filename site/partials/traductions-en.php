@@ -331,7 +331,8 @@ return [
     "Appel d'offres"                  => 'Tender',
 
     // ─── Page Contact ───────────────────────────────────────────────────
-    'Contactez-nous'                  => 'Contact us',
+    // « Contactez-nous » est déjà défini plus haut, pour l'appel à l'action
+    // de la page À propos : une seconde entrée écrasait la première.
     'Nous sommes à votre écoute. Discutons de vos besoins en recherche de marché et découvrons comment nos données peuvent propulser votre stratégie.'
         => 'We are here to listen. Let us discuss your market research needs and see how our data can drive your strategy.',
     'Nos Coordonnées'                 => 'Our Details',
@@ -372,4 +373,30 @@ return [
         => 'The address does not exist, or the page has moved. Here is where to pick up.',
     'Pages du site'                   => 'Site pages',
     'Besoin d\'aide ?'                => 'Need help?',
+
+    /* ─── Messages composés par le JavaScript ────────────────────────────
+       Ces phrases ne sont pas écrites dans le HTML : les pages les passent
+       au script, qui les assemble à l'exécution. Elles étaient absentes du
+       dictionnaire et ressortaient donc en français sur le site anglais —
+       au milieu d'une page par ailleurs traduite. */
+
+    // Compteurs de résultats, affichés après filtrage.
+    'réalisation(s) affichée(s).'     => 'case study(-ies) shown.',
+    'actualité(s) affichée(s).'       => 'news item(s) shown.',
+
+    // Pannes de chargement des listes.
+    "Les réalisations n'ont pas pu être chargées." => 'The case studies could not be loaded.',
+    "Les actualités n'ont pas pu être chargées."   => 'The news items could not be loaded.',
+    'Le serveur a répondu'            => 'The server responded',
+    "Le serveur est injoignable. Vérifiez qu'Apache et MySQL tournent dans XAMPP."
+        => 'The server is unreachable. Check that Apache and MySQL are running in XAMPP.',
+
+    /* Validation du formulaire de contact. Ces fragments sont concaténés
+       autour d'un nombre — « Ce champ dépasse 80 caractères. » */
+    'Ce champ dépasse'                => 'This field exceeds',
+    'caractères.'                     => 'characters.',
+    'Merci de détailler votre demande' => 'Please describe your request in more detail',
+    'caractères minimum'              => 'characters minimum',
+    "Serveur injoignable. Votre message n'a pas été envoyé — réessayez, ou écrivez à"
+        => 'Server unreachable. Your message was not sent — please try again, or write to',
 ];
