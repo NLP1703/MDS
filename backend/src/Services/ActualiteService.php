@@ -3,30 +3,27 @@ declare(strict_types=1);
 
 namespace Mds\Services;
 
+use Mds\Core\Dates;
 use Mds\Models\ActualiteModel;
 
 /**
  * Les actualités, mises en forme pour `actualites.php` et `actualite.php`.
  *
- * Comme pour le portfolio, le libellé de date (« 23 juillet 2026 ») est composé
- * ici : la base garde une vraie DATE pour le tri, et le rendu ne dépend pas de
- * la locale du visiteur.
+ * Comme pour le portfolio, le libellé de date (« 23 juillet 2026 »,
+ * « 23 July 2026 ») est composé ici : la base garde une vraie DATE pour le
+ * tri, et le rendu suit la langue demandée plutôt que la locale du visiteur.
  */
 final class ActualiteService
 {
-    private const MOIS = [
-        1 => 'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
-        'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre',
-    ];
-
     public function __construct(private ActualiteModel $actualites)
     {
     }
 
     /**
+     * @param string $langue Code déjà validé par le contrôleur.
      * @return array{categories: list<array<string,mixed>>, actualites: list<array<string,mixed>>}
      */
-    public function liste(?string $categorie = null): array
+    public function liste(?string $categorie = null, string $langue = 'fr'): array
     {
         return [
             'categories' => array_map(
@@ -35,22 +32,25 @@ final class ActualiteService
                     'libelle' => (string) $c['libelle'],
                     'nombre'  => (int) $c['nombre'],
                 ],
-                $this->actualites->categories()
+                $this->actualites->categories($langue)
             ),
-            'actualites' => array_map($this->presenter(...), $this->actualites->publiees($categorie)),
+            'actualites' => array_map(
+                fn(array $ligne): array => $this->presenter($ligne, $langue),
+                $this->actualites->publiees($categorie, $langue)
+            ),
         ];
     }
 
     /** @return array<string,mixed>|null */
-    public function detail(int $id): ?array
+    public function detail(int $id, string $langue = 'fr'): ?array
     {
-        $ligne = $this->actualites->parId($id);
+        $ligne = $this->actualites->parId($id, $langue);
 
         if ($ligne === null) {
             return null;
         }
 
-        $sortie = $this->presenter($ligne);
+        $sortie = $this->presenter($ligne, $langue);
         $contenu = isset($ligne['contenu']) ? trim((string) $ligne['contenu']) : '';
         $sortie['contenu'] = $contenu === '' ? null : $contenu;
 
@@ -66,7 +66,7 @@ final class ActualiteService
      * @param array<string,mixed> $ligne
      * @return array<string,mixed>
      */
-    private function presenter(array $ligne): array
+    private function presenter(array $ligne, string $langue): array
     {
         $date = (string) $ligne['date_publication'];
 
@@ -76,7 +76,7 @@ final class ActualiteService
             'categorie'        => (string) $ligne['categorie'],
             'categorieLibelle' => (string) $ligne['categorie_libelle'],
             'date'             => $date,
-            'dateLibelle'      => $this->dateLongue($date),
+            'dateLibelle'      => Dates::dateLongue($date, $langue),
             'resume'           => isset($ligne['resume']) && $ligne['resume'] !== null
                 ? (string) $ligne['resume'] : null,
             'lienExterne'      => isset($ligne['lien_externe']) && $ligne['lien_externe'] !== null
@@ -89,22 +89,5 @@ final class ActualiteService
             // texte à montrer, sans transporter ce texte.
             'aContenu'         => isset($ligne['a_contenu']) ? (bool) $ligne['a_contenu'] : null,
         ];
-    }
-
-    /** « 2026-07-23 » → « 23 juillet 2026 ». */
-    private function dateLongue(string $date): string
-    {
-        [$annee, $mois, $jour] = array_pad(explode('-', $date), 3, '');
-        $numero = (int) $mois;
-
-        if (!isset(self::MOIS[$numero])) {
-            return $date;
-        }
-
-        // « 1er avril », et non « 1 avril ».
-        $j = (int) $jour;
-        $quantieme = $j === 1 ? '1er' : (string) $j;
-
-        return $quantieme . ' ' . self::MOIS[$numero] . ' ' . $annee;
     }
 }

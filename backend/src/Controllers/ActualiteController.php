@@ -29,7 +29,7 @@ final class ActualiteController
             return Response::erreur("Catégorie inconnue : $categorie", 404);
         }
 
-        return Response::json($this->actualites->liste($categorie));
+        return Response::json($this->actualites->liste($categorie, $requete->langue()));
     }
 
     /**
@@ -46,7 +46,7 @@ final class ActualiteController
             return Response::erreur('Identifiant d\'actualité manquant ou invalide.', 400);
         }
 
-        $actualite = $this->actualites->detail((int) $brut);
+        $actualite = $this->actualites->detail((int) $brut, $requete->langue());
 
         if ($actualite === null) {
             return Response::erreur('Actualité introuvable.', 404);

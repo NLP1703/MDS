@@ -36,10 +36,14 @@ DROP TABLE IF EXISTS categories_realisation;
 --  c'est lui qui voyage dans l'URL (`?categorie=retail`) et dans l'attribut
 --  data-category du HTML, donc il reste court et sans accent.
 -- ─────────────────────────────────────────────────────────────────────────
+--  Les colonnes `_en` doublent chaque texte affiché. Laissées NULL, l'API rend
+--  le français : une traduction manquante se voit et se corrige, là où une
+--  colonne vide rendue telle quelle laisserait un blanc inexplicable.
 CREATE TABLE categories_realisation (
-  code    VARCHAR(32)       NOT NULL,
-  libelle VARCHAR(80)       NOT NULL,
-  ordre   SMALLINT UNSIGNED NOT NULL DEFAULT 100,
+  code       VARCHAR(32)       NOT NULL,
+  libelle    VARCHAR(80)       NOT NULL,
+  libelle_en VARCHAR(80)           NULL,
+  ordre      SMALLINT UNSIGNED NOT NULL DEFAULT 100,
   PRIMARY KEY (code)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -57,10 +61,12 @@ CREATE TABLE categories_realisation (
 CREATE TABLE realisations (
   realisation_id   INT UNSIGNED      NOT NULL AUTO_INCREMENT,
   titre            VARCHAR(160)      NOT NULL,
+  titre_en         VARCHAR(160)          NULL,
   categorie        VARCHAR(32)       NOT NULL,
   resume           TEXT              NOT NULL,
+  resume_en        TEXT                  NULL,
   -- Date réelle, pas la chaîne « Mars 2024 » : elle sert aussi au tri, et le
-  -- libellé français est produit à l'affichage.
+  -- libellé est produit à l'affichage, dans la langue demandée.
   date_publication DATE              NOT NULL,
   -- Chemin relatif au site (assets/images/…) ou URL absolue.
   image_url        VARCHAR(500)          NULL,
@@ -86,9 +92,10 @@ CREATE TABLE realisations (
 --  Categories_actualite — les onglets de filtre de la page Actualités
 -- ─────────────────────────────────────────────────────────────────────────
 CREATE TABLE categories_actualite (
-  code    VARCHAR(32)       NOT NULL,
-  libelle VARCHAR(80)       NOT NULL,
-  ordre   SMALLINT UNSIGNED NOT NULL DEFAULT 100,
+  code       VARCHAR(32)       NOT NULL,
+  libelle    VARCHAR(80)       NOT NULL,
+  libelle_en VARCHAR(80)           NULL,
+  ordre      SMALLINT UNSIGNED NOT NULL DEFAULT 100,
   PRIMARY KEY (code)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -106,15 +113,18 @@ CREATE TABLE categories_actualite (
 --                               mieux vaut cela qu'un bouton mort.
 --
 --  `date_publication` est une vraie DATE : elle sert au tri, et le libellé
---  français est composé à l'affichage.
+--  est composé à l'affichage, dans la langue demandée.
 -- ─────────────────────────────────────────────────────────────────────────
 CREATE TABLE actualites (
   actualite_id     INT UNSIGNED      NOT NULL AUTO_INCREMENT,
   titre            VARCHAR(200)      NOT NULL,
+  titre_en         VARCHAR(200)          NULL,
   categorie        VARCHAR(32)       NOT NULL,
   date_publication DATE              NOT NULL,
   resume           TEXT                  NULL,
+  resume_en        TEXT                  NULL,
   contenu          MEDIUMTEXT            NULL,
+  contenu_en       MEDIUMTEXT            NULL,
   lien_externe     VARCHAR(500)          NULL,
   image_url        VARCHAR(500)          NULL,
   image_alt        TEXT                  NULL,

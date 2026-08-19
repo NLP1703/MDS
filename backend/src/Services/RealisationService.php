@@ -3,35 +3,32 @@ declare(strict_types=1);
 
 namespace Mds\Services;
 
+use Mds\Core\Dates;
 use Mds\Models\RealisationModel;
 
 /**
- * Le portfolio, mis en forme pour la page `realisations.html`.
+ * Le portfolio, mis en forme pour la page `realisations.php`.
  *
  * Le service porte une seule décision de fond : le libellé de date affiché
- * (« Mars 2024 ») est produit ici, pas dans le navigateur. La base garde une
- * vraie DATE — indispensable au tri — et le site reçoit la chaîne française
- * déjà écrite, ce qui évite d'entretenir une table des mois en JavaScript et
- * garantit le même rendu quelle que soit la locale du visiteur.
+ * (« Mars 2024 », « March 2024 ») est produit ici, pas dans le navigateur. La
+ * base garde une vraie DATE — indispensable au tri — et le site reçoit la
+ * chaîne déjà écrite, ce qui évite d'entretenir une table des mois en
+ * JavaScript. Elle suit la langue demandée, non la locale du visiteur : deux
+ * personnes lisant la même page voient la même date.
  */
 final class RealisationService
 {
-    /** Les mois en toutes lettres. `strftime` est déprécié, `IntlDateFormatter` suppose ext-intl. */
-    private const MOIS = [
-        1 => 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-        'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
-    ];
-
     public function __construct(private RealisationModel $realisations)
     {
     }
 
     /**
+     * @param string $langue Code déjà validé par le contrôleur.
      * @return array{categories: list<array<string,mixed>>, realisations: list<array<string,mixed>>}
      */
-    public function portfolio(?string $categorie = null): array
+    public function portfolio(?string $categorie = null, string $langue = 'fr'): array
     {
-        $lignes = $this->realisations->publiees($categorie);
+        $lignes = $this->realisations->publiees($categorie, $langue);
 
         return [
             'categories'   => array_map(
@@ -40,9 +37,12 @@ final class RealisationService
                     'libelle' => (string) $c['libelle'],
                     'nombre'  => (int) $c['nombre'],
                 ],
-                $this->realisations->categories()
+                $this->realisations->categories($langue)
             ),
-            'realisations' => array_map($this->presenter(...), $lignes),
+            'realisations' => array_map(
+                fn(array $ligne): array => $this->presenter($ligne, $langue),
+                $lignes
+            ),
         ];
     }
 
@@ -55,7 +55,7 @@ final class RealisationService
      * @param array<string,mixed> $ligne
      * @return array<string,mixed>
      */
-    private function presenter(array $ligne): array
+    private function presenter(array $ligne, string $langue): array
     {
         $date = (string) $ligne['date_publication'];
 
@@ -66,23 +66,10 @@ final class RealisationService
             'categorieLibelle' => (string) $ligne['categorie_libelle'],
             'resume'           => (string) $ligne['resume'],
             'date'             => $date,
-            'dateLibelle'      => $this->moisAnnee($date),
+            'dateLibelle'      => Dates::moisAnnee($date, $langue),
             'image'            => $ligne['image_url'] !== null ? (string) $ligne['image_url'] : null,
             'imageAlt'         => $ligne['image_alt'] !== null ? (string) $ligne['image_alt'] : null,
             'fichePdf'         => $ligne['fiche_pdf'] !== null ? (string) $ligne['fiche_pdf'] : null,
         ];
-    }
-
-    /** « 2024-03-01 » → « Mars 2024 ». Une date illisible est rendue telle quelle plutôt que masquée. */
-    private function moisAnnee(string $date): string
-    {
-        [$annee, $mois] = array_pad(explode('-', $date), 2, '');
-        $numero = (int) $mois;
-
-        if (!isset(self::MOIS[$numero])) {
-            return $date;
-        }
-
-        return self::MOIS[$numero] . ' ' . $annee;
     }
 }

@@ -74,6 +74,9 @@ require __DIR__ . '/partials/config.php';
 
 <script>
     const API_BASE = <?= json_encode(MDS['api'], JSON_UNESCAPED_SLASHES) ?>;
+    // La langue voyage jusqu'à l'API : titres, résumés, libellés de catégorie
+    // et dates sont rendus par le serveur, pas traduits dans le navigateur.
+    const LANGUE = <?= json_encode(mds_langue()) ?>;
 
     /* Libellés traduits par PHP au rendu. */
     const L = <?= json_encode([
@@ -209,7 +212,7 @@ require __DIR__ . '/partials/config.php';
 
         (async function charger() {
             try {
-                const reponse = await fetch(API_BASE + '/realisations', { headers: { Accept: 'application/json' } });
+                const reponse = await fetch(API_BASE + '/realisations?lang=' + encodeURIComponent(LANGUE), { headers: { Accept: 'application/json' } });
                 if (!reponse.ok) {
                     const corps = await reponse.json().catch(() => ({}));
                     throw new Error(corps.erreur || (L.repondu + ' ' + reponse.status + '.'));

@@ -29,6 +29,6 @@ final class RealisationController
             return Response::erreur("Catégorie inconnue : $categorie", 404);
         }
 
-        return Response::json($this->realisations->portfolio($categorie));
+        return Response::json($this->realisations->portfolio($categorie, $requete->langue()));
     }
 }

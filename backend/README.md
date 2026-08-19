@@ -109,6 +109,23 @@ Base : `http://localhost/mds-api` — déclarées dans `routes/api.php`.
 | `GET` | `/actualite?id=3` | Détail d'une annonce (400 si l'identifiant manque, 404 si elle n'existe pas) |
 | `POST` | `/contact` | Message du formulaire → `messages_contact` |
 
+### `?lang=` — la langue du contenu
+
+Les trois routes de lecture acceptent `?lang=fr` (défaut) ou `?lang=en`. Elles
+rendent alors les titres, résumés, corps d'annonce, libellés de catégorie **et
+les dates** dans cette langue.
+
+Les traductions vivent dans des colonnes `_en` à côté du français. Une colonne
+vide ou `NULL` fait retomber la réponse sur le français : une annonce publiée
+avant d'être traduite reste lisible, au lieu de s'afficher vide.
+
+Toute valeur non reconnue est ramenée au français. Ce filtre, dans
+[`Request::langue()`](src/Core/Request.php), **est un garde-fou de sécurité** :
+les modèles composent un nom de colonne (`titre_en`) à partir de ce code, et un
+nom de colonne ne peut pas être passé en paramètre lié — il entre donc dans le
+SQL par concaténation. La liste fermée est ce qui garantit que rien venu de
+l'URL n'atteint la requête.
+
 ### `GET /realisations`
 
 ```json
@@ -123,8 +140,10 @@ Base : `http://localhost/mds-api` — déclarées dans `routes/api.php`.
 }
 ```
 
-`dateLibelle` est produit côté serveur : la base garde une vraie `DATE` pour le
-tri, et le rendu ne dépend pas de la locale du visiteur. Une catégorie dont
+`dateLibelle` est produit côté serveur par [`Core\Dates`](src/Core/Dates.php) :
+la base garde une vraie `DATE` pour le tri, et le rendu suit la langue demandée
+plutôt que la locale du visiteur — deux personnes lisant la même page dans la
+même langue voient la même date. Une catégorie dont
 `nombre` vaut 0 n'obtient pas d'onglet — il ne mènerait qu'à un écran vide.
 
 ### `POST /contact` — la seule route écrite depuis l'internet public

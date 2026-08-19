@@ -12,6 +12,10 @@ namespace Mds\Core;
  */
 final class Request
 {
+    /** Les langues que la base sait rendre. Voir `langue()` — c'est un garde-fou. */
+    private const LANGUES = ['fr', 'en'];
+    private const LANGUE_DEFAUT = 'fr';
+
     private function __construct(
         public readonly string $methode,
         public readonly string $chemin,
@@ -62,6 +66,24 @@ final class Request
     {
         $v = $this->query[$cle] ?? null;
         return $v === null || $v === '' ? $defaut : $v;
+    }
+
+    /**
+     * La langue demandée par `?lang=`, ramenée à une liste fermée.
+     *
+     * **Ce filtre est une mesure de sécurité, pas une commodité.** Les modèles
+     * composent un nom de colonne à partir de ce code (`titre_en`) : un nom de
+     * colonne ne pouvant pas être passé en paramètre lié, il entre dans le SQL
+     * par concaténation. Tout ce qui n'est pas reconnu ici retombe donc sur le
+     * français, et rien de ce qu'écrit un visiteur n'atteint la requête.
+     *
+     * Cette liste doit rester alignée sur `MDS_LANGUES`, côté site.
+     */
+    public function langue(): string
+    {
+        $demandee = $this->query('lang');
+
+        return in_array($demandee, self::LANGUES, true) ? $demandee : self::LANGUE_DEFAUT;
     }
 
     public function entete(string $nom): ?string

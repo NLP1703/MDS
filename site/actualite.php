@@ -29,7 +29,11 @@ if ($id !== false && $id !== null) {
         'http' => ['timeout' => 4, 'ignore_errors' => true, 'header' => "Accept: application/json\r\n"],
     ]);
 
-    $brut = @file_get_contents(MDS['api'] . '/actualite?id=' . $id, false, $contexte);
+    $brut = @file_get_contents(
+        MDS['api'] . '/actualite?id=' . $id . '&lang=' . rawurlencode(mds_langue()),
+        false,
+        $contexte
+    );
 
     if ($brut === false) {
         $panne = true;

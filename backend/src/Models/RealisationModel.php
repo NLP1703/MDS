@@ -23,25 +23,50 @@ final class RealisationModel
     }
 
     /**
+     * Le suffixe de colonne d'une langue.
+     *
+     * Le français est la langue de saisie : ses colonnes n'ont pas de suffixe.
+     * Toute autre langue lit `_xx`, et retombe sur le français si la case est
+     * vide — d'où le `COALESCE` plus bas. `NULLIF` traite la chaîne vide comme
+     * une absence : une traduction effacée dans un back-office laisserait
+     * autrement un titre blanc sur le site.
+     *
+     * Le suffixe entre dans le SQL par concaténation, jamais par paramètre —
+     * un nom de colonne ne peut pas être lié. Il est donc filtré ici sur une
+     * liste fermée : rien de ce qui vient de l'URL n'atteint la requête.
+     */
+    private function colonne(string $expression, string $langue): string
+    {
+        return $langue === 'fr'
+            ? $expression
+            : sprintf("COALESCE(NULLIF(%s_%s, ''), %s)", $expression, $langue, $expression);
+    }
+
+    /**
      * Les réalisations publiées, la plus mise en avant d'abord.
      *
      * @param string|null $categorie Code de catégorie, ou null pour toutes.
+     * @param string      $langue    Code déjà validé par le contrôleur.
      * @return list<array<string,mixed>>
      */
-    public function publiees(?string $categorie = null): array
+    public function publiees(?string $categorie = null, string $langue = 'fr'): array
     {
-        $sql = 'SELECT realisation_id   AS id,
-                       titre,
+        $titre    = $this->colonne('r.titre', $langue);
+        $resume   = $this->colonne('r.resume', $langue);
+        $libelle  = $this->colonne('c.libelle', $langue);
+
+        $sql = "SELECT realisation_id   AS id,
+                       $titre           AS titre,
                        r.categorie,
-                       c.libelle        AS categorie_libelle,
-                       resume,
+                       $libelle         AS categorie_libelle,
+                       $resume          AS resume,
                        date_publication,
                        image_url,
                        image_alt,
                        fiche_pdf
                   FROM realisations r
                   JOIN categories_realisation c ON c.code = r.categorie
-                 WHERE r.publiee = 1';
+                 WHERE r.publiee = 1";
 
         $parametres = [];
 
@@ -69,17 +94,19 @@ final class RealisationModel
      *
      * @return list<array<string,mixed>>
      */
-    public function categories(): array
+    public function categories(string $langue = 'fr'): array
     {
+        $libelle = $this->colonne('c.libelle', $langue);
+
         return $this->pdo->query(
-            'SELECT c.code,
-                    c.libelle,
+            "SELECT c.code,
+                    $libelle AS libelle,
                     COUNT(r.realisation_id) AS nombre
                FROM categories_realisation c
                LEFT JOIN realisations r
                       ON r.categorie = c.code AND r.publiee = 1
-              GROUP BY c.code, c.libelle, c.ordre
-              ORDER BY c.ordre, c.libelle'
+              GROUP BY c.code, c.libelle, c.libelle_en, c.ordre
+              ORDER BY c.ordre, c.libelle"
         )->fetchAll();
     }
 

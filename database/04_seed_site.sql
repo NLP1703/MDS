@@ -321,3 +321,228 @@ ON DUPLICATE KEY UPDATE
   image_alt        = VALUES(image_alt),
   publiee          = VALUES(publiee),
   ordre            = VALUES(ordre);
+
+
+-- ═════════════════════════════════════════════════════════════════════════
+--  Traductions anglaises
+-- ═════════════════════════════════════════════════════════════════════════
+--  Rassemblées ici plutôt que mêlées aux insertions : le français reste la
+--  langue de saisie, l'anglais s'ajoute par-dessus. Une colonne `_en` laissée
+--  NULL fait retomber l'API sur le français — voir `colonne()` dans les
+--  modèles. Rien ne s'affiche jamais vide.
+--
+--  Attention : `migrate-site.php` découpe ce fichier sur le point-virgule.
+--  Aucun texte ci-dessous n'en contient, et il ne faut pas en introduire.
+-- ═════════════════════════════════════════════════════════════════════════
+
+UPDATE categories_realisation SET libelle_en = 'Retail Audit'    WHERE code = 'retail';
+UPDATE categories_realisation SET libelle_en = 'Market Research' WHERE code = 'market';
+UPDATE categories_realisation SET libelle_en = 'Training'        WHERE code = 'training';
+UPDATE categories_realisation SET libelle_en = 'Certification'   WHERE code = 'certification';
+
+UPDATE categories_actualite SET libelle_en = 'News'           WHERE code = 'actu';
+UPDATE categories_actualite SET libelle_en = 'Tenders'        WHERE code = 'appel';
+UPDATE categories_actualite SET libelle_en = 'Careers'        WHERE code = 'carriere';
+UPDATE categories_actualite SET libelle_en = 'Certifications' WHERE code = 'certif';
+
+UPDATE realisations SET
+  titre_en  = 'National Retail Audit - Soft Drinks',
+  resume_en = 'Comprehensive analysis of the numeric and physical distribution of carbonated soft drinks across the whole country, for an industry leader.'
+WHERE realisation_id = 1;
+
+UPDATE realisations SET
+  titre_en  = 'Usage and Attitude Study - Telecoms',
+  resume_en = 'In-depth understanding of mobile data consumption habits and identification of loyalty drivers for a major operator.'
+WHERE realisation_id = 2;
+
+UPDATE realisations SET
+  titre_en  = 'Sales Force Training - FMCG',
+  resume_en = 'Intensive capacity-building programme for 150 sales representatives, focused on negotiation techniques and field data collection.'
+WHERE realisation_id = 3;
+
+UPDATE realisations SET
+  titre_en  = 'ISO Certification Support',
+  resume_en = 'Mock audit and alignment of the internal processes of a local industrial company, to obtain the ISO 9001 standard.'
+WHERE realisation_id = 4;
+
+UPDATE actualites SET
+  titre_en  = 'Vacancy: Community Manager (M/F)',
+  resume_en = 'MDS is looking for a Community Manager to grow the firm''s digital visibility, engage its online communities and contribute to its communication strategy.',
+  contenu_en = 'Reference: **CM-R1-PAC-2026** — MDS, Marketing & Distribution Services, Douala (Maképè – St Tropez).
+
+## Purpose
+Selection of a candidate for the position of Community Manager, to grow the digital visibility of the firm, engage its online communities and contribute to its communication strategy.
+
+## Duties and expected work
+**Managing brand image and digital presence**
+- Maintain visibility and credibility across social networks and digital platforms
+- Keep the brand image and tone of communication consistent
+- Publish attractive, professional content: study results, market trends, consumer analysis
+
+**Community engagement and growth**
+- Interact regularly with followers, clients, prospects and partners
+- Respond promptly to comments, messages and requests
+- Build engagement and retain the online community
+
+**Promoting research and strategic communication**
+- Showcase the analyses and market studies produced by the firm
+- Propose innovative initiatives to raise awareness
+
+## Candidate profile
+**Technical skills**
+- Command of professional social networks, LinkedIn in particular
+- Command of content creation and scheduling tools: Canva, scheduling software
+- Knowledge of current digital trends
+- Command of technical English, read and written
+
+**Personal qualities**
+- Creativity and a sense of innovation
+- Strong responsiveness and excellent communication skills
+- Ability to make complex data easy to grasp
+
+## Application file
+- Up-to-date curriculum vitae
+- Cover letter quoting reference CM-R1-PAC-2026, addressed to the S1 Lead
+- Photocopy of the national identity card
+- Photocopy of the highest diploma obtained
+- Map showing the location of the applicant''s home
+
+## Terms and how to apply
+**Application deadline: 21 August 2026.**
+
+- **By email:** recruit@mds-cmr.com, quoting CM-R1-PAC-2026 in the subject line
+- **In person:** MDS – Douala, Résidence City Nikita, Maképè – St Tropez, 1st floor, 2nd door on the right'
+WHERE actualite_id = 1;
+
+UPDATE actualites SET
+  titre_en  = 'Vacancy: Community Manager (M/F)',
+  resume_en = 'MDS is looking for a Community Manager to grow the firm''s digital visibility and showcase the studies it produces.',
+  contenu_en = 'Reference: **CM-R1-PAC-2026** — MDS, Marketing & Distribution Services, Douala (Maképè – St Tropez).
+
+## Main assignment
+Grow the digital visibility of the firm, engage its online communities, showcase the studies and analyses produced, and keep the brand image and tone of communication consistent.
+
+## Candidate profile
+- Command of professional social networks, LinkedIn in particular
+- Command of creation tools (Canva) and content scheduling
+- Good knowledge of digital trends and command of technical English, read and written
+- Creativity, responsiveness, a sense of innovation and the ability to make complex data easy to grasp
+
+## Application file
+Curriculum vitae and cover letter.
+
+## Deadline
+**19 June 2026 at 3:00 pm.**
+
+## How to apply
+Send the application to recruit@mds-cmr.com, or deliver it in a sealed envelope to the Management office.'
+WHERE actualite_id = 2;
+
+UPDATE actualites SET
+  titre_en  = 'Tender: Data backup, protection & network access control',
+  resume_en = 'Call for bids for a complete solution covering data backup, protection and recovery, together with control of access to the computer network.',
+  contenu_en = 'MDS, Marketing & Distribution Services — Douala (Maképè – St Tropez), Cameroon.
+
+## Purpose
+Selection of a supplier to put in place a complete solution for backing up, protecting and restoring data, together with control of access to the computer network.
+
+## Expected work
+**Backup and protection**
+- Scheduled automatic backups and a retention policy
+- Encryption of data at rest and in transit
+- Management of access rights
+- Prevention of data loss and corruption
+
+**Restoration**
+- Fast restoration procedures
+- Business continuity plan
+- Regular testing
+
+**Network access control**
+- Identity and access management (IAM)
+- Strong authentication
+- Network segmentation and rights management by profile
+- Access logging
+
+## Main terms
+- Initial one-year contract, renewable
+- Response time in the event of an incident to be stated
+- Roll-out according to the supplier schedule
+
+## Bid file
+- Presentation of the company
+- Technical proposal
+- Deployment schedule
+- Financial offer
+
+## Deadline and how to bid
+**Submission deadline: 24 April 2026.**
+
+Send the offer to recruit@mds-cmr.com, including the technical proposal, the financial offer, references and response times.'
+WHERE actualite_id = 3;
+
+UPDATE actualites SET
+  titre_en  = 'Tender: Website training, management and updating',
+  resume_en = 'Call for bids to appoint a trainer to deliver hands-on training in managing and updating the MDS website.',
+  contenu_en = 'MDS, Marketing & Distribution Services — Douala (Maképè – St Tropez).
+
+## Purpose
+Appointment of a trainer to deliver hands-on training in managing and updating the company website.
+
+## Expected work
+- Intensive two-day training
+- Getting to grips with the site administration interface
+- Publishing and updating content: text, images, video
+- Introduction to the basics of search engine optimisation (SEO)
+- Good practice in site security and maintenance
+
+## Audience
+Three to five participants from the marketing team.
+
+## Expected deliverables
+- Training material: PDF and video tutorials
+- Certificates of attendance
+- Practical guide to managing the site
+
+## Selection criteria
+- Experience in web training
+- Client references
+- Teaching method
+- Cost and payment terms
+
+## Schedule
+**Submission deadline: 24 April 2026.** Training planned for May 2026.
+
+## How to bid
+Send the offer to recruit@mds-cmr.com, with the technical proposal, the financial offer, references and the teaching method.'
+WHERE actualite_id = 4;
+
+UPDATE actualites SET
+  titre_en  = 'Tender: Solar energy maintenance',
+  resume_en = 'Call for bids for the upkeep and maintenance of the solar energy installations at the MDS premises in Douala.',
+  contenu_en = 'MDS, Marketing & Distribution Services — Douala (Maképè – St Tropez).
+
+## Purpose
+Selection of a supplier for the upkeep and maintenance of the solar energy installations.
+
+## Expected work
+- Cleaning and inspection of the solar panels
+- Checking and repair of the electrical systems
+- Monitoring of energy output
+
+## Main terms
+- Annual maintenance contract
+- Response within 48 hours
+- Warranty on parts and labour
+
+## Selection criteria
+- Value for money
+- Response times
+- Terms of delivery and payment
+- References and experience
+
+## Deadline and how to bid
+**Submission deadline: 16 April 2026.**
+
+Send the offer to recruit@mds-cmr.com, including prices, terms, references and response times.'
+WHERE actualite_id = 5;
