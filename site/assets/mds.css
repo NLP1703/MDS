@@ -484,12 +484,17 @@
 
 .rangee-partenaires {
     display: flex;
-    flex-wrap: wrap;
+    /* `nowrap` est délibéré : les trois marques doivent rester sur une seule
+       ligne, y compris sur un téléphone. Avec `wrap`, deux tuiles de 190 px
+       plus l'écart dépassaient la largeur d'un petit écran et la rangée se
+       repliait en colonne. Ce sont les tuiles qui se réduisent, pas la ligne
+       qui se casse. */
+    flex-wrap: nowrap;
     align-items: center;
     justify-content: center;
     /* Valeurs littérales : les espacements du projet vivent dans la
        configuration Tailwind, hors de portée d'une feuille CSS ordinaire. */
-    gap: 1.5rem;
+    gap: clamp(0.5rem, 3vw, 1.5rem);
     margin: 0;
     padding-block: 0;
     list-style: none;
@@ -501,10 +506,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    flex: 0 0 auto;
-    width: 190px;
-    height: 96px;
-    padding: 0.75rem;
+    /* Les trois tuiles se partagent la largeur à parts égales et se réduisent
+       ensemble. `min-width: 0` est indispensable : sans lui, une tuile flex
+       refuse de passer sous la largeur de son contenu et déborde. */
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 190px;
+    height: clamp(64px, 17vw, 96px);
+    padding: clamp(0.4rem, 1.5vw, 0.75rem);
     background: #fff;
     border: 1px solid rgba(11, 31, 73, 0.08);
     border-radius: 0.75rem;

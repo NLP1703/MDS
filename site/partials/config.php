@@ -92,6 +92,25 @@ function e(?string $valeur): string
    qui exige que rien n'ait encore été envoyé au navigateur. */
 require_once __DIR__ . '/i18n.php';
 
+/**
+ * Adresse d'un fichier statique, suffixée de sa date de modification.
+ *
+ * `assets/mds.css` devient `assets/mds.css?v=1755600000`. Le navigateur voit
+ * une adresse différente à chaque modification et recharge le fichier ; tant
+ * que rien ne change, il garde sa copie.
+ *
+ * Sans cela, une feuille de style corrigée pouvait rester invisible : le
+ * serveur n'envoie ni `Cache-Control` ni `Expires` — `mod_expires` n'est pas
+ * chargé, et les directives du `.htaccess` restent donc lettre morte — et le
+ * navigateur applique alors sa propre heuristique de fraîcheur.
+ */
+function mds_ressource(string $chemin): string
+{
+    $date = @filemtime(__DIR__ . '/../' . $chemin);
+
+    return $date === false ? $chemin : $chemin . '?v=' . $date;
+}
+
 /** Lien WhatsApp complet, à partir du numéro déclaré plus haut. */
 function mds_whatsapp(): string
 {

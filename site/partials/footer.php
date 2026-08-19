@@ -77,5 +77,5 @@ require_once __DIR__ . '/config.php';
 </div>
 </footer>
 
-<script src="assets/menu-mobile.js"></script>
-<script src="assets/mds.js"></script>
+<script src="<?= e(mds_ressource('assets/menu-mobile.js')) ?>"></script>
+<script src="<?= e(mds_ressource('assets/mds.js')) ?>"></script>

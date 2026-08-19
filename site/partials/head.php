@@ -77,4 +77,4 @@ $image_absolue = rtrim(MDS['origine'], '/') . '/' . ltrim($image_og, '/');
          démarrage, avant de générer les classes du document. */ ?>
 <script src="assets/vendor/tailwind.js"></script>
 <script src="assets/mds-tailwind.js"></script>
-<link href="assets/mds.css" rel="stylesheet"/>
+<link href="<?= e(mds_ressource('assets/mds.css')) ?>" rel="stylesheet"/>
