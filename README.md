@@ -75,6 +75,33 @@ page, et l'origine `file://` n'est de toute façon pas autorisée par l'API.
 | Réalisations affichées | base `mds_site`, table `realisations` |
 | Actualités publiées | base `mds_site`, table `actualites` |
 
+## Notifications du formulaire de contact
+
+Un message reçu est **enregistré dans `messages_contact`, puis envoyé par
+courriel** à l'entreprise. La base fait foi : si le serveur de courrier est
+injoignable, le message reste enregistré, l'incident part dans le journal PHP
+avec sa référence, et le visiteur voit tout de même sa confirmation. Une
+notification perdue se rattrape en base ; un message jamais enregistré est
+perdu pour de bon.
+
+L'envoi passe par SMTP ([`src/Core/Mailer.php`](backend/src/Core/Mailer.php)),
+sans Composer comme le reste du projet. `MDS_SMTP_HOST` vide **désactive
+l'envoi** — c'est le cas en local, où XAMPP n'a pas de serveur de courrier.
+
+| Variable | Exemple | Rôle |
+|---|---|---|
+| `MDS_SMTP_HOST` | `smtp-relay.brevo.com` | serveur SMTP ; vide = pas d'envoi |
+| `MDS_SMTP_PORT` | `587` | 587 avec STARTTLS, 465 en SSL |
+| `MDS_SMTP_SECURITE` | `tls` | `tls`, `ssl`, ou `aucun` (tests locaux **seulement**) |
+| `MDS_SMTP_USER` | — | identifiant SMTP |
+| `MDS_SMTP_PASS` | — | mot de passe SMTP |
+| `MDS_MAIL_FROM` | `site@mds-cmr.com` | expéditeur — doit appartenir à un domaine autorisé par le relais |
+| `MDS_MAIL_TO` | `contact@mds-cmr.com` | boîte qui reçoit les demandes |
+
+L'adresse du visiteur est placée en `Reply-To`, jamais en `From` : l'y mettre
+ferait échouer les contrôles SPF et enverrait la notification en indésirable.
+Répondre au courriel écrit donc directement au visiteur.
+
 ## Mise en ligne sur Vercel
 
 Vercel n'exécute pas PHP nativement et n'héberge aucune base : le déploiement

@@ -37,8 +37,10 @@ final class ContactService
 
     private const CONFIRMATION = 'Message envoyé avec succès. Nous vous contacterons bientôt.';
 
-    public function __construct(private MessageContactModel $messages)
-    {
+    public function __construct(
+        private MessageContactModel $messages,
+        private NotificationContact $notification,
+    ) {
     }
 
     /**
@@ -74,7 +76,7 @@ final class ContactService
             ]];
         }
 
-        $id = $this->messages->enregistrer([
+        $donnees = [
             'prenom'     => $this->texte($corps['firstName'] ?? ''),
             'nom'        => $this->texte($corps['lastName'] ?? ''),
             'entreprise' => $this->texteOuNull($corps['company'] ?? null),
@@ -83,7 +85,15 @@ final class ContactService
             'message'    => $this->texte($corps['message'] ?? ''),
             'ip'         => $ip,
             'userAgent'  => $userAgent === null ? null : mb_substr($userAgent, 0, 255),
-        ]);
+        ];
+
+        // La base d'abord : elle fait foi. Le courriel n'est qu'une alerte, et
+        // `prevenir()` ne remonte jamais d'erreur — une panne du serveur de
+        // courrier ne doit pas faire croire au visiteur que sa demande est
+        // perdue alors qu'elle est enregistrée.
+        $id = $this->messages->enregistrer($donnees);
+
+        $this->notification->prevenir($donnees, $id);
 
         return ['statut' => 201, 'donnees' => [
             'id'      => $id,

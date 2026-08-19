@@ -16,6 +16,7 @@ declare(strict_types=1);
 use Mds\Core\Config;
 use Mds\Core\Container;
 use Mds\Core\Database;
+use Mds\Core\Mailer;
 
 spl_autoload_register(static function (string $classe): void {
     $prefixe = 'Mds\\';
@@ -73,10 +74,26 @@ $container->partage(
     )
 );
 
+/* Le courrier sortant. Rien n'est ouvert ici : la connexion au serveur SMTP
+   n'a lieu qu'à l'envoi, et seul le formulaire de contact en déclenche un. */
+$container->partage(
+    Mailer::class,
+    static fn(Container $c) => new Mailer($c->get(Config::class)->section('mail'))
+);
+
+$container->partage(
+    Mds\Services\NotificationContact::class,
+    static fn(Container $c) => new Mds\Services\NotificationContact(
+        $c->get(Mailer::class),
+        $c->get(Config::class),
+    )
+);
+
 $container->partage(
     Mds\Services\ContactService::class,
     static fn(Container $c) => new Mds\Services\ContactService(
-        $c->get(Mds\Models\MessageContactModel::class)
+        $c->get(Mds\Models\MessageContactModel::class),
+        $c->get(Mds\Services\NotificationContact::class),
     )
 );
 
