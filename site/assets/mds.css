@@ -1,0 +1,751 @@
+/**
+ * MDS — feuille de style partagée.
+ *
+ * ─── Règle des 3 propriétés ───
+ *
+ * Toutes les transitions de ce fichier n'animent que `opacity`, `transform` ou
+ * `filter`. Ces trois-là sont composées par le GPU : elles ne déclenchent ni
+ * recalcul de mise en page (reflow) ni redessin (repaint), ce qui tient les
+ * 60 images par seconde même sur un téléphone d'entrée de gamme.
+ *
+ * Deux conséquences visibles dans le code :
+ *   · les ombres au survol passent par l'opacité d'un pseudo-élément, jamais
+ *     par une transition sur `box-shadow` — celle-ci repeint la carte à chaque
+ *     image ;
+ *   · les soulignés de menu utilisent `scaleX`, jamais `width`, qui relance la
+ *     mise en page de toute la barre de navigation.
+ */
+
+@import url('fonts/inter.css');
+@import url('fonts/archivo.css');
+@import url('fonts/material-symbols.css');
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Icônes
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.icon-fill {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Accessibilité
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/**
+ * `:focus-visible` et non `:focus` : le navigateur décide, et l'anneau
+ * n'apparaît donc pas au clic à la souris — c'est ce qui pousse d'ordinaire
+ * à supprimer l'indicateur, laissant sans repère les personnes qui naviguent
+ * au clavier.
+ */
+:focus-visible {
+    outline: 3px solid #189cd8;
+    outline-offset: 2px;
+    border-radius: 3px;
+}
+
+.lien-evitement {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 100;
+    padding: 12px 24px;
+    background: #0b1f49;
+    color: #ffffff;
+    font-weight: 500;
+    border-radius: 0 0 8px 0;
+}
+
+.lien-evitement:focus {
+    left: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   1 · Transition de page — « fade & slide »
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/**
+ * Les navigateurs qui gèrent l'API View Transitions enchaînent les deux pages
+ * en fondu croisé natif, sans que la page blanchisse entre les deux.
+ */
+@view-transition {
+    navigation: auto;
+}
+
+::view-transition-old(root) {
+    animation: sortie-page 180ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+::view-transition-new(root) {
+    animation: entree-page 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes sortie-page {
+    to { opacity: 0; transform: translateY(-6px); }
+}
+
+@keyframes entree-page {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/**
+ * Repli pour les navigateurs sans View Transitions (Firefox, Safari anciens).
+ * `mds.js` pose `.page-sortante` avant de suivre un lien interne, et retire
+ * `.page-entrante` au chargement.
+ */
+.page-entrante {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.page-prete {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 520ms var(--courbe-apparition),
+                transform 520ms var(--courbe-apparition);
+}
+
+.page-sortante {
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 180ms ease-in, transform 180ms ease-in;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   2 · Micro-interactions de navigation
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/**
+ * Souligné glissant du menu.
+ *
+ * Le trait est un pseudo-élément à `scaleX(0)` qui s'ouvre au survol. L'origine
+ * change selon l'état : il s'ouvre depuis la gauche et se referme vers la
+ * droite, ce qui donne l'impression d'un trait qui glisse plutôt que d'un
+ * trait qui clignote.
+ */
+.lien-menu {
+    position: relative;
+    transition: color 0.2s ease;
+}
+
+.lien-menu::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -4px;
+    height: 2px;
+    background: #189cd8;
+    border-radius: 2px;
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lien-menu:hover::after,
+.lien-menu:focus-visible::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+}
+
+/* La page courante garde son trait en permanence, dans la couleur de marque. */
+.lien-menu[aria-current="page"]::after {
+    transform: scaleX(1);
+    background: #0b1f49;
+}
+
+.lien-menu[aria-current="page"]:hover::after {
+    background: #189cd8;
+}
+
+/**
+ * Pression physique sur les éléments cliquables.
+ * `scale(0.98)` seulement — assez pour être senti, trop peu pour être vu.
+ */
+.pressable {
+    transition: transform 0.12s ease, color 0.2s ease, background-color 0.2s ease;
+}
+
+.pressable:active {
+    transform: scale(0.98);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   3 · Apparition au défilement
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/**
+ * Rythme.
+ *
+ * Les durées sont volontairement longues — un peu plus d'une seconde. Une
+ * apparition rapide se lit comme un rafraîchissement d'écran ; une apparition
+ * lente se lit comme une intention, et retient l'œil sur ce qui arrive.
+ *
+ * La courbe est fortement décélérée : le mouvement démarre franchement puis
+ * s'installe, plutôt que de glisser à vitesse constante.
+ */
+:root {
+    --duree-apparition: 1.15s;
+    --courbe-apparition: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity var(--duree-apparition) var(--courbe-apparition),
+                transform var(--duree-apparition) var(--courbe-apparition);
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/**
+ * Cascade. Les délais sont posés par `mds.js` en variable CSS : un groupe de
+ * cartes s'ouvre l'un après l'autre sans qu'il faille écrire une classe de
+ * délai par carte dans le HTML.
+ */
+.reveal { transition-delay: var(--retard, 0ms); }
+
+/* Conservées pour les délais posés à la main dans les pages. */
+.delay-100 { --retard: 180ms; }
+.delay-200 { --retard: 360ms; }
+.delay-300 { --retard: 540ms; }
+
+/**
+ * Variantes d'entrée.
+ *
+ * Le sens de l'arrivée porte une information : sur la frise, les étapes
+ * viennent du côté où elles sont posées, ce qui souligne l'alternance plutôt
+ * que de la contredire.
+ */
+.reveal-gauche { opacity: 0; transform: translateX(-36px); }
+.reveal-droite { opacity: 0; transform: translateX(36px); }
+.reveal-zoom   { opacity: 0; transform: scale(0.93); }
+
+.reveal-gauche,
+.reveal-droite,
+.reveal-zoom {
+    transition: opacity var(--duree-apparition) var(--courbe-apparition),
+                transform var(--duree-apparition) var(--courbe-apparition);
+    transition-delay: var(--retard, 0ms);
+}
+
+.reveal-gauche.active,
+.reveal-droite.active { opacity: 1; transform: translateX(0); }
+.reveal-zoom.active   { opacity: 1; transform: scale(1); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Apparition mot à mot
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/**
+ * Le titre du héros se compose mot par mot.
+ *
+ * Les mots sont enveloppés par `mds.js` : le texte reste entier dans le HTML,
+ * donc lisible par les moteurs de recherche et affiché tel quel si le script
+ * ne s'exécute pas.
+ *
+ * Chaque mot est un `inline-block` — un élément `inline` ignore `transform`.
+ */
+.mots-anime .mot {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(0.5em);
+    transition: opacity 0.9s var(--courbe-apparition),
+                transform 0.9s var(--courbe-apparition);
+    transition-delay: var(--retard, 0ms);
+    /* Sans cela, `translateY` rogne les jambages des lettres descendantes. */
+    padding-bottom: 0.08em;
+}
+
+.mots-anime.active .mot {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Barres de progression
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/**
+ * Progression de lecture, en haut de l'écran.
+ *
+ * `scaleX` sur un élément fixe : le navigateur ne recalcule rien, il
+ * réétire une texture déjà composée. Une barre dont on animerait la `width`
+ * relancerait la mise en page à chaque image de défilement.
+ */
+.barre-lecture {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 60;
+    background: linear-gradient(90deg, #189cd8, #f0a83c);
+    transform: scaleX(var(--lu, 0));
+    transform-origin: left center;
+    pointer-events: none;
+}
+
+/**
+ * Barre de navigation entre deux pages.
+ *
+ * Elle part vite puis ralentit sans jamais atteindre le bout : la page suivante
+ * arrive avant, et la barre disparaît avec elle. Une barre qui finirait sa
+ * course avant l'arrivée donnerait l'impression que le site s'est figé.
+ */
+.barre-navigation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 70;
+    background: #f0a83c;
+    transform: scaleX(0);
+    transform-origin: left center;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.barre-navigation.active {
+    opacity: 1;
+    animation: chargement-page 2s cubic-bezier(0.1, 0.85, 0.3, 1) forwards;
+}
+
+@keyframes chargement-page {
+    0%   { transform: scaleX(0); }
+    35%  { transform: scaleX(0.55); }
+    70%  { transform: scaleX(0.8); }
+    100% { transform: scaleX(0.94); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Frise — le déroulé d'une étude
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.frise { position: relative; }
+
+/* Le rail gris, posé une fois pour toutes. */
+.frise::before {
+    content: "";
+    position: absolute;
+    left: 19px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: #dce3ec;
+    border-radius: 2px;
+}
+
+/**
+ * Le trait de couleur qui se remplit au défilement.
+ *
+ * `--avancement` va de 0 à 1, posé par `mds.js` d'après la position de la
+ * frise dans l'écran. `scaleY` plutôt que `height` : même raison que la barre
+ * de lecture.
+ */
+.frise::after {
+    content: "";
+    position: absolute;
+    left: 19px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: linear-gradient(180deg, #189cd8, #f0a83c);
+    border-radius: 2px;
+    transform: scaleY(var(--avancement, 0));
+    transform-origin: top center;
+    will-change: transform;
+}
+
+@media (min-width: 768px) {
+    .frise::before,
+    .frise::after { left: 50%; margin-left: -1px; }
+}
+
+.etape { position: relative; padding-left: 60px; }
+
+@media (min-width: 768px) {
+    .etape { padding-left: 0; width: 50%; }
+    .etape:nth-child(odd)  { padding-right: 48px; text-align: right; }
+    .etape:nth-child(even) { margin-left: 50%; padding-left: 48px; }
+}
+
+/* La pastille numérotée, sur le rail. */
+.etape-pastille {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    background: #ffffff;
+    border: 2px solid #dce3ec;
+    color: #5c6274;
+    font-weight: 800;
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+    z-index: 1;
+    transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1),
+                border-color 0.7s ease,
+                color 0.7s ease,
+                background-color 0.7s ease;
+}
+
+@media (min-width: 768px) {
+    .etape-pastille { left: auto; right: -20px; }
+    .etape:nth-child(even) .etape-pastille { left: -20px; right: auto; }
+}
+
+/* Franchie : la pastille se remplit et donne une petite impulsion. */
+.etape.active .etape-pastille {
+    background: #0b1f49;
+    border-color: #f0a83c;
+    color: #f0a83c;
+    transform: scale(1.12);
+}
+
+/**
+ * Mouvement réduit.
+ *
+ * Un système peut signaler que les animations donnent vertiges ou migraines à
+ * la personne qui l'utilise. Le contenu doit alors apparaître, pas glisser.
+ */
+@media (prefers-reduced-motion: reduce) {
+    .reveal,
+    .reveal-gauche,
+    .reveal-droite,
+    .reveal-zoom,
+    .page-entrante,
+    .page-sortante {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+
+    /* La frise reste lisible : le trait est plein d'emblée, les pastilles
+       marquées, mais rien ne bouge. */
+    .frise::after { transform: scaleY(1) !important; }
+
+    .etape-pastille { transition: none !important; transform: none !important; }
+
+    .mots-anime .mot {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+
+    .parallaxe { transform: none !important; }
+
+    .barre-lecture,
+    .barre-navigation { display: none !important; }
+
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+        animation: none !important;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   4 · États — survol et focus
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.card-elevation-1 {
+    box-shadow: 0 1px 2px rgba(11, 31, 73, 0.06), 0 4px 12px rgba(11, 31, 73, 0.05);
+}
+
+.card-elevation-2 {
+    box-shadow: 0 12px 32px rgba(11, 31, 73, 0.14);
+}
+
+/**
+ * Ombre douce au survol, sans repeindre.
+ *
+ * L'ombre profonde est posée en permanence sur un pseudo-élément transparent ;
+ * seul son `opacity` est animé. Une transition sur `box-shadow` obligerait le
+ * navigateur à recalculer le flou à chaque image — c'est le défaut classique
+ * qui fait tomber une grille de cartes sous les 60 FPS au défilement.
+ */
+.bento-card {
+    position: relative;
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bento-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: 0 12px 32px rgba(11, 31, 73, 0.16);
+    opacity: 0;
+    transition: opacity 0.22s ease;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.bento-card:hover {
+    transform: translateY(-4px);
+}
+
+.bento-card:hover::before {
+    opacity: 1;
+}
+
+/**
+ * Parallaxe.
+ *
+ * L'image d'un héros défile un peu moins vite que la page. Le décalage est
+ * volontairement faible — quelques dizaines de pixels : au-delà, l'effet se
+ * remarque, et un héros qui se remarque vole la vedette à ce qu'il illustre.
+ *
+ * L'image est agrandie de 12 % pour que le décalage ne découvre jamais de
+ * bande vide en haut ou en bas.
+ */
+.parallaxe {
+    will-change: transform;
+    transform: translate3d(0, var(--decalage, 0px), 0) scale(1.12);
+}
+
+/* Les images de carte respirent légèrement au survol de la carte. */
+.zoom-doux {
+    overflow: hidden;
+}
+
+.zoom-doux img {
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+}
+
+.bento-card:hover .zoom-doux img {
+    transform: scale(1.04);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Composants
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Appel à l'action principal — l'ambre du logo. */
+.btn-accent {
+    background-color: #f0a83c;
+    color: #22160a;
+    border-radius: 9px;
+    font-weight: 700;
+    transition: background-color 0.2s ease, transform 0.12s ease;
+}
+
+.btn-accent:hover { background-color: #ffb955; }
+.btn-accent:active { transform: scale(0.98); }
+
+/* Action secondaire — le bleu de marque. */
+.btn-primary {
+    background-color: #183c84;
+    color: #ffffff;
+    border-radius: 9px;
+    transition: background-color 0.2s ease, transform 0.12s ease;
+}
+
+.btn-primary:hover { background-color: #0b1f49; }
+.btn-primary:active { transform: scale(0.98); }
+
+/* Action tertiaire — contour seul. */
+.btn-contour {
+    border: 1.5px solid #dce3ec;
+    color: #0b1f49;
+    border-radius: 9px;
+    transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.12s ease;
+}
+
+.btn-contour:hover { border-color: #189cd8; background-color: #f6f8fb; }
+.btn-contour:active { transform: scale(0.98); }
+
+/* Boutons de filtre — page Réalisations */
+.filter-btn {
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.12s ease;
+}
+
+.filter-btn:active { transform: scale(0.98); }
+
+.filter-btn.active {
+    background-color: #183c84;
+    color: #ffffff;
+    border: 1px solid #183c84;
+}
+
+.filter-btn:not(.active) {
+    background-color: transparent;
+    color: #5c6274;
+    border: 1px solid #dce3ec;
+}
+
+.filter-btn:not(.active):hover {
+    background-color: #f6f8fb;
+    border-color: #189cd8;
+    color: #0b1f49;
+}
+
+/* Onglets Mission / Vision / Stratégie */
+.onglet {
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.12s ease;
+}
+
+.onglet:active { transform: scale(0.98); }
+
+.onglet.actif {
+    background-color: #183c84;
+    color: #ffffff;
+    border: 1px solid #183c84;
+}
+
+.onglet:not(.actif) {
+    background-color: transparent;
+    color: #5c6274;
+    border: 1px solid #dce3ec;
+}
+
+.onglet:not(.actif):hover {
+    background-color: #f6f8fb;
+    border-color: #189cd8;
+}
+
+/**
+ * Battement du bouton WhatsApp flottant.
+ * `transform` et `opacity` uniquement — la version précédente animait
+ * `box-shadow`, qui repeint à chaque image.
+ */
+.fab-pulse { position: relative; }
+
+.fab-pulse::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: 0.45;
+    transform: scale(1);
+    animation: battement 2.4s ease-out infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+
+@keyframes battement {
+    0%   { transform: scale(1);    opacity: 0.45; }
+    70%  { transform: scale(1.55); opacity: 0; }
+    100% { transform: scale(1.55); opacity: 0; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Squelettes de chargement
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.squelette {
+    background: #eff3f8;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Le reflet est un pseudo-élément translaté : `transform`, pas
+   `background-position`, qui repeint la surface entière. */
+.squelette::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.85), transparent);
+    transform: translateX(-100%);
+    animation: scintillement 1.5s ease-in-out infinite;
+}
+
+@keyframes scintillement {
+    100% { transform: translateX(100%); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Formulaire
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.champ-invalide { border-color: #ba1a1a !important; }
+
+.erreur-champ {
+    color: #ba1a1a;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+}
+
+input, select, textarea {
+    transition: border-color 0.2s ease;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   En-tête
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/**
+ * L'ombre n'apparaît qu'une fois la page défilée : posée d'emblée, elle
+ * dessinerait une barre là où le contenu touche encore l'en-tête. Elle passe
+ * par un pseudo-élément, pour la même raison que les cartes.
+ */
+.entete-site { position: sticky; }
+
+.entete-site::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    box-shadow: 0 2px 10px rgba(11, 31, 73, 0.10);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+}
+
+.entete-site.defile::after { opacity: 1; }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Impression
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@media print {
+    .entete-site,
+    #navMobile,
+    .fab-pulse,
+    .lien-evitement { display: none !important; }
+
+    .reveal,
+    .page-entrante {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    body { background: #ffffff; color: #000000; }
+}

@@ -1,0 +1,14 @@
+node_modules/
+dist/
+*.local
+.DS_Store
+.vite/
+
+# État local d'outils d'assistance : journaux de travail et notes internes.
+# Ce n'est pas du code du projet, et cela n'a pas à être publié.
+.refact/
+
+# Réglages d'éditeur, propres à un poste.
+.vscode/
+.idea/
+Thumbs.db

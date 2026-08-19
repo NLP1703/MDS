@@ -1,0 +1,20 @@
+# Toutes les requêtes passent par index.php : les routes sont des chemins
+# (/visites, /sante), pas des fichiers sur le disque.
+#
+# Nécessite mod_rewrite — actif par défaut dans XAMPP — et AllowOverride All
+# sur ce dossier (voir backend/README.md).
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Pas de RewriteBase : la règle se résout alors dans le dossier courant,
+    # que l'API soit servie à la racine ou sous un alias (/mds-api). Une base
+    # codée en dur enverrait la réécriture vers la racine d'htdocs.
+
+    # Un fichier ou un dossier réel est servi tel quel ; le reste va au routeur.
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+# Apache ne doit pas lister le dossier si le routeur venait à manquer.
+Options -Indexes

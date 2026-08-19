@@ -1,0 +1,54 @@
+# ═══════════════════════════════════════════════════════════════════════════
+#  Site vitrine MDS — configuration Apache du dossier
+# ═══════════════════════════════════════════════════════════════════════════
+
+# La racine sert la page d'accueil. Sans cette ligne, Apache cherche
+# `index.html` — absent depuis le passage en PHP — puis affiche le listing du
+# dossier, c'est-à-dire l'arborescence du projet offerte au premier venu.
+DirectoryIndex index.php
+
+# Et par sécurité, le listing reste interdit même si l'index venait à manquer.
+Options -Indexes
+
+# Page d'erreur maison plutôt que celle d'Apache.
+ErrorDocument 404 /mds-site/404.php
+
+# Les partials ne sont jamais servis directement : ils n'ont pas de sens hors
+# d'une page, et `config.php` contient les coordonnées et l'adresse de l'API.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^partials/ - [F,L]
+</IfModule>
+
+# Mise en cache des ressources statiques. Le logo, les polices et Tailwind ne
+# changent pas d'une visite à l'autre ; les recharger à chaque page coûte
+# 1,9 Mo pour rien — ce qui se sent sur une connexion mobile.
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/png                "access plus 1 year"
+    ExpiresByType image/jpeg               "access plus 1 year"
+    ExpiresByType image/svg+xml            "access plus 1 year"
+    ExpiresByType font/woff2               "access plus 1 year"
+    ExpiresByType text/css                 "access plus 1 month"
+    ExpiresByType application/javascript   "access plus 1 month"
+    # Les pages, elles, doivent rester fraîches.
+    ExpiresByType text/html                "access plus 0 seconds"
+</IfModule>
+
+# Compression : les pages et les scripts sont du texte très redondant.
+# Les woff2 et les PNG sont déjà compressés, les recompresser ne gagne rien.
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css text/plain
+    AddOutputFilterByType DEFLATE application/javascript application/json
+    AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# En-têtes de sécurité élémentaires.
+<IfModule mod_headers.c>
+    # Empêche le navigateur de deviner un type MIME différent de celui déclaré.
+    Header set X-Content-Type-Options "nosniff"
+    # Interdit l'affichage du site dans une iframe d'un autre domaine.
+    Header set X-Frame-Options "SAMEORIGIN"
+    # Ne transmet pas l'URL complète aux sites tiers vers lesquels on renvoie.
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
