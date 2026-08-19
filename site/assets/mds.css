@@ -479,44 +479,24 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   3 bis · Bandeau défilant des marques clientes
-   ═══════════════════════════════════════════════════════════════════════
+   3 bis · Rangée des marques clientes
+   ═══════════════════════════════════════════════════════════════════════ */
 
-   Seul `transform` est animé — jamais `left` ni `margin`, qui obligeraient le
-   navigateur à recalculer la mise en page soixante fois par seconde.
-
-   La piste porte deux groupes identiques et se déplace de -50 % : au terme du
-   cycle, le second groupe est exactement là où le premier commençait, et la
-   reprise est invisible. Déplacer de 100 % laisserait le bandeau se vider. */
-
-.bandeau-partenaires {
-    overflow: hidden;
-    /* Les logos s'effacent sur les bords plutôt que d'être tranchés net par
-       la limite de l'écran. */
-    -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
-    mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
-}
-
-.bandeau-piste {
+.rangee-partenaires {
     display: flex;
-    width: max-content;
-    animation: defilement-partenaires 45s linear infinite;
-    will-change: transform;
-}
-
-.bandeau-groupe {
-    display: flex;
+    flex-wrap: wrap;
     align-items: center;
+    justify-content: center;
     /* Valeurs littérales : les espacements du projet vivent dans la
        configuration Tailwind, hors de portée d'une feuille CSS ordinaire. */
     gap: 1.5rem;
-    padding-inline: 0.75rem;
     margin: 0;
+    padding-block: 0;
     list-style: none;
 }
 
 /* Tuile blanche : les logos fournis ont des fonds opaques et différents
-   (noir, brun, blanc). Sans ce cadre commun, la bande formerait un damier. */
+   (noir, brun, blanc). Sans ce cadre commun, la rangée formerait un damier. */
 .bandeau-tuile {
     display: flex;
     align-items: center;
@@ -539,36 +519,11 @@
     object-fit: contain;
 }
 
-/* Le survol d'une tuile la détache légèrement — et met le défilement en
-   pause, sans quoi elle se déroberait sous le curseur. */
 .bandeau-tuile:hover { transform: translateY(-3px); }
 
-.bandeau-partenaires:hover .bandeau-piste,
-.bandeau-partenaires:focus-within .bandeau-piste {
-    animation-play-state: paused;
-}
-
-@keyframes defilement-partenaires {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
-}
-
 @media (prefers-reduced-motion: reduce) {
-    /* Rien ne bouge : la bande devient une simple rangée que l'on fait
-       défiler soi-même. */
-    .bandeau-piste {
-        animation: none !important;
-        transform: none !important;
-    }
-
     .bandeau-tuile { transition: none !important; }
     .bandeau-tuile:hover { transform: none !important; }
-
-    .bandeau-partenaires {
-        overflow-x: auto;
-        -webkit-mask-image: none;
-        mask-image: none;
-    }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
