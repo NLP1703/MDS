@@ -10,7 +10,12 @@ declare(strict_types=1);
  * différentes avaient fini par cohabiter sur le site.
  */
 
-const MDS = [
+/*
+ * `define` et non `const` : les deux dernières entrées lisent l'environnement,
+ * ce qu'une constante de compilation n'autorise pas. L'usage ne change pas —
+ * `MDS['email']` s'écrit toujours de la même façon.
+ */
+define('MDS', [
     'nom'        => 'MDS Market Research',
     'nom_long'   => 'Marketing & Distribution Services',
     'email'      => 'contact@mds-cmr.com',
@@ -20,13 +25,21 @@ const MDS = [
     'adresse'    => 'Makepe St Tropez',
     'ville'      => 'Douala, Cameroun',
     'horaires'   => 'Lundi à vendredi, 9 h – 17 h',
-    // Base de l'API. Le site et l'API sont servis par le même Apache ; en
-    // production, remplacer par l'URL publique de l'API.
-    'api'        => 'http://localhost/mds-api',
-    // Origine publique du site — sert à composer les URL absolues exigées par
-    // Open Graph, qui refuse les chemins relatifs.
-    'origine'    => 'http://localhost/mds-site',
-];
+
+    /*
+     * Base de l'API et origine publique du site.
+     *
+     * En local, le site et l'API sont deux alias du même Apache, d'où les
+     * valeurs de repli. En ligne, l'hébergeur les fournit par l'environnement :
+     * elles changent à chaque domaine, et les coder en dur obligerait à
+     * modifier le fichier avant chaque mise en ligne — donc à l'oublier.
+     *
+     * `origine` doit rester une URL absolue : Open Graph refuse les chemins
+     * relatifs, et `actualite.php` appelle l'API depuis le serveur.
+     */
+    'api'        => getenv('MDS_API_URL') ?: 'http://localhost/mds-api',
+    'origine'    => getenv('MDS_SITE_ORIGINE') ?: 'http://localhost/mds-site',
+]);
 
 /**
  * Le menu, dans l'ordre. La clé sert à marquer la page courante.

@@ -72,14 +72,34 @@ final class Request
     /**
      * L'adresse du client, pour le limiteur de débit du formulaire de contact.
      *
-     * `REMOTE_ADDR` uniquement : `X-Forwarded-For` est un en-tête que le client
+     * `REMOTE_ADDR` par défaut : `X-Forwarded-For` est un en-tête que le client
      * écrit lui-même, et le croire donnerait à un robot le moyen de changer
-     * d'identité à chaque envoi — c'est-à-dire de désactiver le limiteur. Le
-     * jour où l'API passe derrière un reverse proxy, cette méthode devra lire
-     * l'en-tête que ce proxy garantit, et lui seul.
+     * d'identité à chaque envoi — c'est-à-dire de désactiver le limiteur.
+     *
+     * Derrière un reverse proxy, `REMOTE_ADDR` devient l'adresse du proxy : la
+     * même pour tous les visiteurs. Le limiteur compterait alors leurs envois
+     * ensemble et fermerait le formulaire à tout le monde au cinquième message.
+     *
+     * D'où `MDS_ENTETE_IP` : il nomme le seul en-tête auquel se fier, celui que
+     * l'hébergeur écrit lui-même et qu'un client ne peut pas usurper — par
+     * exemple `x-vercel-forwarded-for`. Non renseigné, rien ne change. Y mettre
+     * `x-forwarded-for` sans proxy devant reviendrait à laisser le visiteur
+     * choisir son identité, et donc à désactiver le limiteur.
      */
     public function ip(): ?string
     {
+        $entete = getenv('MDS_ENTETE_IP') ?: null;
+
+        if (is_string($entete) && ($valeur = $this->entete($entete)) !== null) {
+            // Ces en-têtes portent parfois une chaîne « client, proxy1, proxy2 » :
+            // le client est en tête, le reste a été ajouté en chemin.
+            $candidat = trim(explode(',', $valeur)[0]);
+
+            if (filter_var($candidat, FILTER_VALIDATE_IP)) {
+                return $candidat;
+            }
+        }
+
         $ip = $_SERVER['REMOTE_ADDR'] ?? null;
 
         return is_string($ip) && filter_var($ip, FILTER_VALIDATE_IP) ? $ip : null;

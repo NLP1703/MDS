@@ -75,6 +75,41 @@ page, et l'origine `file://` n'est de toute façon pas autorisée par l'API.
 | Réalisations affichées | base `mds_site`, table `realisations` |
 | Actualités publiées | base `mds_site`, table `actualites` |
 
+## Mise en ligne sur Vercel
+
+Vercel n'exécute pas PHP nativement et n'héberge aucune base : le déploiement
+repose sur le runtime communautaire [`vercel-php`](https://github.com/vercel-community/php)
+et sur un **MySQL externe**, à provisionner séparément (Aiven, TiDB Cloud,
+Clever Cloud, ou le MySQL d'un hébergeur classique).
+
+`vercel.json` remplace ce que faisaient les `.htaccess`, qui sont ignorés :
+routage des pages, blocage de `partials/`, en-têtes de sécurité et de cache.
+`api/index.php` expose l'API sous `/api` — voir le commentaire du fichier, son
+emplacement n'est pas anodin.
+
+Variables d'environnement à déclarer dans Vercel (Settings → Environment
+Variables) :
+
+| Variable | Rôle |
+|---|---|
+| `MDS_SITE_DB_HOST` | hôte MySQL externe |
+| `MDS_SITE_DB_PORT` | port, si différent de 3306 |
+| `MDS_SITE_DB_NAME` | nom de la base |
+| `MDS_SITE_DB_USER` | compte — `SELECT` suffit, sauf pour le formulaire |
+| `MDS_SITE_DB_PASS` | mot de passe |
+| `MDS_API_URL` | `https://<domaine>/api` |
+| `MDS_SITE_ORIGINE` | `https://<domaine>` — URL absolue, exigée par Open Graph |
+| `MDS_ENTETE_IP` | `x-vercel-forwarded-for` — sans quoi le limiteur du formulaire compte tous les visiteurs comme un seul |
+
+Le schéma et les données de départ s'importent une fois dans la base externe
+depuis [`database/`](database/).
+
+**Ce que ce déploiement coûte**, par rapport à un hébergement PHP classique :
+le runtime PHP n'est pas officiellement supporté par Vercel, les pages
+deviennent des fonctions serverless démarrées à froid, et la base est chez un
+tiers — donc un aller-retour réseau à chaque requête. Un hébergement mutualisé
+Apache + PHP + MySQL fait tourner ce code sans une ligne de configuration.
+
 ## Notes
 
 Aucune étape de compilation, aucun `npm`. Tailwind est servi depuis
