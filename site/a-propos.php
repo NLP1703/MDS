@@ -301,6 +301,11 @@ $equipe = [
 </div>
 </section>
 
+<?php /* Les marques clientes ne figurent que sur cette page : elles étayent le
+         propos « qui sommes-nous », et n'ont pas leur place sous un
+         formulaire de contact ou une liste d'annonces. */ ?>
+<?php require __DIR__ . '/partials/bandeau-partenaires.php'; ?>
+
 </main>
 
 <?php require __DIR__ . '/partials/footer.php'; ?>
