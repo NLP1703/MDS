@@ -59,6 +59,23 @@ const MDS_MENU = [
 ];
 
 /**
+ * Les marques qui défilent au-dessus du pied de page.
+ *
+ * L'ordre est celui de l'affichage. Ajouter une entrée suffit : le bandeau
+ * répète la liste autant de fois qu'il faut pour couvrir l'écran, quelle que
+ * soit sa largeur.
+ *
+ * Les fichiers sont des JPEG à fond opaque — noir pour Guinness, brun pour
+ * Chococam, blanc pour Danone. C'est la raison des tuiles blanches du
+ * bandeau : posés côte à côte sans cadre, ces fonds formeraient un damier.
+ */
+const MDS_PARTENAIRES = [
+    ['fichier' => 'GUINESS.jpg',  'nom' => 'Guinness Cameroun'],
+    ['fichier' => 'DANONE.jpg',   'nom' => 'Danone'],
+    ['fichier' => 'CHOCOCAM.jpg', 'nom' => 'Chococam'],
+];
+
+/**
  * Échappement HTML.
  *
  * Nommée court parce qu'elle est appelée partout : toute valeur qui entre dans

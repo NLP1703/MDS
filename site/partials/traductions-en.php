@@ -27,6 +27,7 @@ return [
     'Navigation du pied de page'     => 'Footer navigation',
     'Ouvrir le menu'           => 'Open menu',
     'Fermer le menu'           => 'Close menu',
+    'Ils nous font confiance'  => 'Trusted by',
     'Navigation'               => 'Navigation',
     'Nous joindre'             => 'Get in touch',
     'Nous trouver'             => 'Find us',

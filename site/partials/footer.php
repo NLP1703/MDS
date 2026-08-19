@@ -18,6 +18,12 @@ require_once __DIR__ . '/config.php';
 <span class="material-symbols-outlined icon-fill" aria-hidden="true" style="font-size: 28px;">forum</span>
 </a>
 
+<?php /* Le bandeau des marques précède le pied de page : il se lit comme une
+         conclusion à la page, pas comme une mention légale. Inclus ici plutôt
+         que dans chaque page — six copies auraient fini par diverger, comme
+         les trois pieds de page d'avant. */ ?>
+<?php require __DIR__ . '/bandeau-partenaires.php'; ?>
+
 <footer class="bg-primary mt-auto">
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-xl px-gutter py-xxl w-full max-w-container-max mx-auto">
 
