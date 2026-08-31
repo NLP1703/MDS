@@ -479,60 +479,105 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   3 bis · Rangée des marques clientes
-   ═══════════════════════════════════════════════════════════════════════ */
+   3 bis · Bandeau défilant des marques clientes
+   ═══════════════════════════════════════════════════════════════════════
 
-.rangee-partenaires {
+   Seul `transform` est animé — jamais `left` ni `margin`, qui obligeraient le
+   navigateur à recalculer la mise en page soixante fois par seconde.
+
+   La piste porte deux groupes identiques et se déplace de -50 % : au terme du
+   cycle, le second groupe est exactement là où le premier commençait, et la
+   reprise est invisible. Déplacer de 100 % laisserait le bandeau se vider. */
+
+.bandeau-partenaires {
+    overflow: hidden;
+    /* Les logos s'effacent sur les bords plutôt que d'être tranchés net par
+       la limite de l'écran. */
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+
+.bandeau-piste {
     display: flex;
-    /* `nowrap` est délibéré : les trois marques doivent rester sur une seule
-       ligne, y compris sur un téléphone. Avec `wrap`, deux tuiles de 190 px
-       plus l'écart dépassaient la largeur d'un petit écran et la rangée se
-       repliait en colonne. Ce sont les tuiles qui se réduisent, pas la ligne
-       qui se casse. */
-    flex-wrap: nowrap;
+    width: max-content;
+    /* 75 s pour les quelque 4 200 px d'une moitié, soit environ 55 px par
+       seconde : assez lent pour qu'un nom se lise au passage. */
+    animation: defilement-partenaires 75s linear infinite;
+    will-change: transform;
+}
+
+.bandeau-groupe {
+    display: flex;
     align-items: center;
-    justify-content: center;
     /* Valeurs littérales : les espacements du projet vivent dans la
        configuration Tailwind, hors de portée d'une feuille CSS ordinaire. */
-    gap: clamp(0.5rem, 3vw, 1.5rem);
+    gap: 1rem;
+    padding-inline: 0.5rem;
     margin: 0;
     padding-block: 0;
     list-style: none;
 }
 
-/* Tuile blanche : les logos fournis ont des fonds opaques et différents
-   (noir, brun, blanc). Sans ce cadre commun, la rangée formerait un damier. */
+/* Tuile transparente : la section est déjà blanche, un aplat blanc de plus
+   n'y ajouterait rien, et le filet gris enfermait chaque marque dans sa
+   vignette. Les trois logos à fond opaque — le noir de Guinness, le brun de
+   Chococam, le carré d'Orange — portent leur aplat dans le fichier même. */
 .bandeau-tuile {
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Les trois tuiles se partagent la largeur à parts égales et se réduisent
-       ensemble. `min-width: 0` est indispensable : sans lui, une tuile flex
-       refuse de passer sous la largeur de son contenu et déborde. */
-    flex: 1 1 0;
-    min-width: 0;
-    max-width: 190px;
-    height: clamp(64px, 17vw, 96px);
-    padding: clamp(0.4rem, 1.5vw, 0.75rem);
-    background: #fff;
-    border: 1px solid rgba(11, 31, 73, 0.08);
-    border-radius: 0.75rem;
+    /* Largeur figée, ni extensible ni compressible : la piste est une ligne
+       sans retour, et une tuile élastique s'y étirerait pour combler la
+       largeur restante au lieu de garder son gabarit. */
+    flex: 0 0 clamp(116px, 30vw, 172px);
+    /* Le rapport 2/1 est celui du gabarit des fichiers : la tuile épouse
+       l'image au lieu de lui imposer une hauteur fixe, donc aucun logo n'est
+       ni rogné ni flottant dans du vide. */
+    aspect-ratio: 2 / 1;
+    padding: clamp(0.35rem, 1vw, 0.6rem);
     transition: transform 0.25s ease;
 }
 
+/* Bornes hautes, pas dimensions imposées : une hauteur en pourcentage ne
+   trouverait rien à quoi se rapporter, la hauteur de la tuile venant de son
+   `aspect-ratio`, et l'image s'écraserait à zéro. */
 .bandeau-logo {
     max-width: 100%;
     max-height: 100%;
     width: auto;
     height: auto;
-    object-fit: contain;
 }
 
+/* Le survol d'une tuile la détache légèrement — et met le défilement en
+   pause, sans quoi elle se déroberait sous le curseur. */
 .bandeau-tuile:hover { transform: translateY(-3px); }
 
+.bandeau-partenaires:hover .bandeau-piste,
+.bandeau-partenaires:focus-within .bandeau-piste {
+    animation-play-state: paused;
+}
+
+@keyframes defilement-partenaires {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+
 @media (prefers-reduced-motion: reduce) {
+    /* Rien ne bouge : la bande devient une simple rangée que l'on fait
+       défiler soi-même. */
+    .bandeau-piste {
+        animation: none !important;
+        transform: none !important;
+    }
+
     .bandeau-tuile { transition: none !important; }
     .bandeau-tuile:hover { transform: none !important; }
+
+    .bandeau-partenaires {
+        overflow-x: auto;
+        -webkit-mask-image: none;
+        mask-image: none;
+    }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -789,6 +834,142 @@ input, select, textarea {
 .entete-site.defile::after { opacity: 1; }
 
 /* ═══════════════════════════════════════════════════════════════════════
+   Capacités opérationnelles — compteur à rouleaux
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/**
+ * Le chiffre ne défile pas de 0 à sa valeur : chacun de ses chiffres **roule**
+ * dans une fenêtre d'un caractère de haut, comme le compteur d'un tableau de
+ * bord. C'est le même geste qu'un relevé de terrain qui se stabilise.
+ *
+ * Pourquoi un rouleau plutôt qu'un décompte : un décompte affiche 723, 724,
+ * 725 — l'œil lit trois nombres faux avant le bon. Le rouleau ne montre jamais
+ * un nombre plausible mais inexact, seulement des chiffres en mouvement.
+ *
+ * Les colonnes de droite tournent plus longtemps que celles de gauche (le
+ * script leur donne davantage de tours pour la même durée) et le retard les
+ * fait se poser de gauche à droite : le nombre s'installe au lieu d'atterrir
+ * d'un bloc.
+ *
+ * Ici encore, rien d'autre que `transform` n'est animé.
+ */
+.compteur-rouleau {
+    --hauteur-chiffre: 1.1em;
+
+    display: inline-flex;
+    height: var(--hauteur-chiffre);
+    overflow: hidden;
+    vertical-align: bottom;
+}
+
+.rouleau {
+    display: flex;
+    flex-direction: column;
+    /* La position de départ est le haut du ruban ; `--arrivee` est calculée
+       par le script, qui seul connaît le nombre de tours de la colonne. */
+    transform: translateY(0);
+    transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--retard-rouleau, 0ms);
+    will-change: transform;
+}
+
+.rouleau > span {
+    display: block;
+    height: var(--hauteur-chiffre);
+    line-height: var(--hauteur-chiffre);
+    /* Les chiffres n'ont pas tous la même chasse dans Archivo ; sans cela, la
+       colonne s'élargirait au passage du 1 et le nombre tremblerait. */
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+}
+
+.carte-pays.active .rouleau { transform: translateY(var(--arrivee, 0)); }
+
+/**
+ * La carte se redresse plutôt que de monter. L'inclinaison est faible — 8° —
+ * et le point de pivot est posé en bas : la carte se relève depuis sa base,
+ * comme une fiche que l'on redresse sur une table.
+ */
+/* `perspective` ne s'applique qu'aux **enfants directs** : posée sur la
+   section, elle n'aurait pas atteint les cartes et le `rotateX` se serait
+   aplati en simple étirement. Elle appartient donc à la grille, dont les
+   cartes sont les enfants immédiats — et un seul point de fuite, partagé,
+   incline les quatre cartes comme un même regard les verrait. */
+.grille-pays { perspective: 1400px; }
+
+.carte-pays {
+    opacity: 0;
+    transform: translateY(26px) rotateX(8deg) scale(0.98);
+    transform-origin: 50% 100%;
+    transition: opacity var(--duree-apparition) var(--courbe-apparition),
+                transform var(--duree-apparition) var(--courbe-apparition);
+    transition-delay: var(--retard-carte, 0ms);
+}
+
+.carte-pays.active {
+    opacity: 1;
+    transform: translateY(0) rotateX(0) scale(1);
+}
+
+/**
+ * Le drapeau se déplie.
+ *
+ * Une rotation autour de son bord gauche, comme une étoffe qui prend le vent
+ * en s'accrochant à sa hampe. La perspective est portée par le `transform`
+ * lui-même : sur 45 px de large, un point de fuite partagé avec les cartes
+ * écraserait la rotation au lieu de la creuser.
+ */
+.drapeau-pays {
+    display: block;
+    border-radius: 3px;
+    flex: none;
+    opacity: 0;
+    transform: perspective(320px) rotateY(-58deg);
+    transform-origin: left center;
+    transition: opacity 0.7s var(--courbe-apparition),
+                transform 0.9s var(--courbe-apparition);
+    transition-delay: calc(var(--retard-carte, 0ms) + 160ms);
+}
+
+.carte-pays.active .drapeau-pays {
+    opacity: 1;
+    transform: perspective(320px) rotateY(0deg);
+}
+
+/* Le trait ambre se trace sous le nombre, une fois la carte posée. */
+.trait-accent {
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.8s var(--courbe-apparition);
+    transition-delay: calc(var(--retard-carte, 0ms) + 420ms);
+}
+
+.carte-pays.active .trait-accent { transform: scaleX(1); }
+
+/**
+ * Mouvement réduit : la carte est simplement là. Le rouleau, lui, n'est jamais
+ * construit — le script s'en abstient et laisse le nombre écrit dans la page.
+ */
+@media (prefers-reduced-motion: reduce) {
+    .carte-pays {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+
+    .trait-accent {
+        transform: none;
+        transition: none;
+    }
+
+    .drapeau-pays {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
    Impression
    ═══════════════════════════════════════════════════════════════════════ */
 
@@ -799,6 +980,9 @@ input, select, textarea {
     .lien-evitement { display: none !important; }
 
     .reveal,
+    .carte-pays,
+    .trait-accent,
+    .drapeau-pays,
     .page-entrante {
         opacity: 1 !important;
         transform: none !important;

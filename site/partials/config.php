@@ -22,7 +22,7 @@ define('MDS', [
     'tel_fixe'   => '+237 233 47 00 21',
     'tel_mobile' => '+237 696 96 77 43',
     'whatsapp'   => '237696967743',
-    'adresse'    => 'Makepe St Tropez',
+    'adresse'    => 'Makepe Saint Tropez, Résidence city Nikita 1er étage, 2e porte à droite',
     'ville'      => 'Douala, Cameroun',
     'horaires'   => 'Lundi à vendredi, 9 h – 17 h',
 
@@ -42,6 +42,37 @@ define('MDS', [
 ]);
 
 /**
+ * L'adresse de l'API telle que le navigateur doit l'appeler — qui n'est pas
+ * celle qu'emploie le serveur.
+ *
+ * En local, le site et l'API sont deux alias du même Apache : le chemin seul
+ * suffit, et vaut mieux qu'une URL absolue. `http://localhost/mds-api` écrit
+ * en dur dans la page échoue dès qu'elle est ouverte autrement que sur
+ * `http://localhost` :
+ *
+ *   — en `https://localhost`, le navigateur refuse d'aller chercher du `http`
+ *     depuis une page chiffrée, et bloque l'appel avant même de l'émettre ;
+ *   — depuis un autre poste ou un téléphone du réseau local, `localhost`
+ *     désigne l'appareil qui regarde, pas celui qui sert.
+ *
+ * Dans les deux cas `fetch` échoue au niveau réseau, et les pages annoncent un
+ * serveur injoignable alors qu'Apache et MySQL tournent. Le chemin relatif,
+ * lui, suit toujours la page : même schéma, même hôte, même port, donc ni
+ * contenu mixte ni requête inter-origines.
+ *
+ * En ligne, `MDS_API_URL` est fournie par l'hébergeur et peut désigner un tout
+ * autre domaine : elle est alors reprise telle quelle.
+ */
+function mds_api_navigateur(): string
+{
+    if (getenv('MDS_API_URL')) {
+        return MDS['api'];
+    }
+
+    return parse_url(MDS['api'], PHP_URL_PATH) ?: MDS['api'];
+}
+
+/**
  * Le menu, dans l'ordre. La clé sert à marquer la page courante.
  *
  * Les libellés restent en français ici : ils passent par `t()` à l'affichage,
@@ -59,20 +90,35 @@ const MDS_MENU = [
 ];
 
 /**
- * Les marques qui défilent au-dessus du pied de page.
+ * Les marques qui défilent au-dessus du pied de page, dans l'ordre
+ * alphabétique.
  *
- * L'ordre est celui de l'affichage. Ajouter une entrée suffit : le bandeau
- * répète la liste autant de fois qu'il faut pour couvrir l'écran, quelle que
- * soit sa largeur.
+ * Ajouter une entrée suffit : le bandeau répète la liste autant de fois qu'il
+ * faut pour couvrir l'écran, quelle que soit sa largeur.
  *
- * Les fichiers sont des JPEG à fond opaque — noir pour Guinness, brun pour
- * Chococam, blanc pour Danone. C'est la raison des tuiles blanches du
- * bandeau : posés côte à côte sans cadre, ces fonds formeraient un damier.
+ * Chaque fichier est un PNG transparent posé sur un gabarit commun de
+ * 480 × 240, la marque centrée dedans à surface optique égale. C'est ce
+ * gabarit, et non le CSS, qui fait qu'un logo large comme Diageo et un logo
+ * haut comme Cadyst pèsent le même poids dans la rangée : à hauteur de tuile
+ * identique, le premier serait sinon quatre fois plus imposant que le second.
+ *
+ * Trois marques gardent un fond opaque parce qu'il fait partie de leur
+ * identité — le noir de Guinness, le brun de Chococam, le carré orange
+ * d'Orange. Cet aplat vit dans le fichier, pas dans le CSS : le bandeau ne
+ * pose aucun cadre autour des logos, qui reposent à même le blanc de la page.
  */
 const MDS_PARTENAIRES = [
-    ['fichier' => 'GUINESS.jpg',  'nom' => 'Guinness Cameroun'],
-    ['fichier' => 'DANONE.jpg',   'nom' => 'Danone'],
-    ['fichier' => 'CHOCOCAM.jpg', 'nom' => 'Chococam'],
+    ['fichier' => 'logo-beetle-heritage.png',    'nom' => 'Beetle Heritage Holding'],
+    ['fichier' => 'logo-bic.png',                'nom' => 'BIC'],
+    ['fichier' => 'logo-cadyst-group.png',       'nom' => 'Cadyst Group'],
+    ['fichier' => 'logo-chococam.png',           'nom' => 'Chococam'],
+    ['fichier' => 'logo-cimencam.png',           'nom' => 'Cimencam'],
+    ['fichier' => 'logo-colgate-palmolive.png',  'nom' => 'Colgate-Palmolive'],
+    ['fichier' => 'logo-danone.png',             'nom' => 'Danone'],
+    ['fichier' => 'logo-diageo.png',             'nom' => 'Diageo'],
+    ['fichier' => 'logo-guinness.png',           'nom' => 'Guinness Cameroun'],
+    ['fichier' => 'logo-orange.png',             'nom' => 'Orange'],
+    ['fichier' => 'logo-royal-unibrew.png',      'nom' => 'Royal Unibrew'],
 ];
 
 /**

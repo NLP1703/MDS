@@ -147,7 +147,9 @@ require __DIR__ . '/partials/config.php';
 <?php require __DIR__ . '/partials/footer.php'; ?>
 
 <script>
-    const API_BASE = <?= json_encode(MDS['api'], JSON_UNESCAPED_SLASHES) ?>;
+    // Chemin relatif en local, URL absolue en ligne : voir
+    // `mds_api_navigateur()` dans partials/config.php.
+    const API_BASE = <?= json_encode(mds_api_navigateur(), JSON_UNESCAPED_SLASHES) ?>;
     const EMAIL_MDS = <?= json_encode(MDS['email']) ?>;
 
     /* Les libellés du script sont traduits par PHP au rendu : le

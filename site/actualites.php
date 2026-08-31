@@ -24,7 +24,7 @@ require __DIR__ . '/partials/config.php';
 <span class="inline-block text-secondary font-label-sm text-label-sm uppercase tracking-wider mb-sm"><?= te('Dernières nouvelles & insights') ?></span>
 <h1 class="mots-anime font-display-lg text-headline-lg-mobile md:text-display-lg text-primary mb-md"><?= te('Actualités') ?></h1>
 <p class="font-body-lg text-body-lg text-on-surface-variant max-w-3xl mx-auto">
-    <?= te('MDS : alliez actualité et recherches approfondies pour anticiper les changements du marché.') ?>
+    <?= te("Allier l'actualité aux recherches approfondies afin d'anticiper efficacement les évolutions du marché.") ?>
 </p>
 </section>
 
@@ -73,7 +73,9 @@ require __DIR__ . '/partials/config.php';
 <?php require __DIR__ . '/partials/footer.php'; ?>
 
 <script>
-    const API_BASE = <?= json_encode(MDS['api'], JSON_UNESCAPED_SLASHES) ?>;
+    // Chemin relatif en local, URL absolue en ligne : voir
+    // `mds_api_navigateur()` dans partials/config.php.
+    const API_BASE = <?= json_encode(mds_api_navigateur(), JSON_UNESCAPED_SLASHES) ?>;
     // La langue voyage jusqu'à l'API : titres, résumés, libellés de catégorie
     // et dates sont rendus par le serveur, pas traduits dans le navigateur.
     const LANGUE = <?= json_encode(mds_langue()) ?>;

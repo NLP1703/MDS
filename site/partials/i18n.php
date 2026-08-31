@@ -133,11 +133,13 @@ function te(string $phrase): string
  */
 function mds_url_langue(string $langue): string
 {
-    $chemin = basename(parse_url($_SERVER['REQUEST_URI'] ?? 'index.php', PHP_URL_PATH) ?: 'index.php');
-
-    if ($chemin === '' || $chemin === '/') {
-        $chemin = 'index.php';
-    }
+    /* `SCRIPT_NAME` plutôt que `REQUEST_URI` : le second porte le chemin par
+       lequel le visiteur est arrivé, alias compris. Servi sous `/mds-site/`,
+       `basename()` y lisait « mds-site » et le lien de langue devenait
+       `/mds-site/mds-site?lang=fr`, qui n'existe pas. `SCRIPT_NAME` nomme le
+       script réellement exécuté : `index.php` quel que soit l'alias, et la
+       page elle-même sur les autres adresses. */
+    $chemin = basename($_SERVER['SCRIPT_NAME'] ?? '') ?: 'index.php';
 
     $parametres = $_GET;
     $parametres['lang'] = $langue;

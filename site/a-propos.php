@@ -31,12 +31,12 @@ require __DIR__ . '/partials/config.php';
  */
 $equipe = [
     [
-        'nom'        => 'Franck WANDA',
+        'nom'        => 'Franck Wanda',
         'role'       => 'Research Executive',
         'photo'      => 'equipe-franck-wanda.jpg',
-        'experience' => '10 ans et plus',
-        'langues'    => 'Français et anglais',
-        'mission'    => 'Pilote de R1 — prospecter, traiter les appels d\'offres et conclure les contrats',
+        'experience' => '10 ans +',
+        'langues'    => 'Français et Anglais',
+        'mission'    => 'Pilote de R1 : Prospecter, Traiter les Appels d\'offre et conclure les contrats',
     ],
     [
         'nom'        => 'Felix TACHI',
@@ -55,12 +55,12 @@ $equipe = [
         'mission'    => 'Pilote de R3 — facturer, encaisser et recouvrer',
     ],
     [
-        'nom'        => 'Cyrille ASSOUKOM',
+        'nom'        => 'Cyrille Stephane Assoukom',
         'role'       => 'Project Manager',
         'photo'      => 'equipe-cyrille-assoukom.jpg',
-        'experience' => '15 ans et plus',
-        'langues'    => 'Français et anglais',
-        'mission'    => 'Actrice de R1',
+        'experience' => '15 ans +',
+        'langues'    => 'Français et Anglais',
+        'mission'    => 'Animatrice R1: Prospecter, Traiter les Appels d\'offres et conclure les contrats',
     ],
     [
         'nom'        => 'Pacôme EMMTEU',
@@ -71,20 +71,20 @@ $equipe = [
         'mission'    => 'Pilote de S1 — gérer les ressources',
     ],
     [
-        'nom'        => 'J. Marie NGO NINDE',
-        'role'       => 'Responsable de l\'intégrité du système de management qualité',
+        'nom'        => 'Marie Josephine Ngo Ninde',
+        'role'       => 'Responsable de l\'intégrité du Système de Management Qualité',
         'photo'      => 'equipe-jmarie-ngo-ninde.jpg',
-        'experience' => '3 ans et plus',
+        'experience' => '3 ans +',
         'langues'    => 'Français',
-        'mission'    => null,
+        'mission'    => 'Animatrice M1: Elaborer la Stratégie et Piloter L\'excellence Opérationnelle',
     ],
     [
-        'nom'        => 'Marcel TCHIO',
-        'role'       => 'Responsable du contrôle qualité — cartographe',
+        'nom'        => 'Marcel Vernier Tchio Kembou',
+        'role'       => 'Responsable du Contrôle Qualité - Cartographe',
         'photo'      => 'equipe-marcel-tchio.jpg',
-        'experience' => '3 ans et plus',
+        'experience' => '3 ans +',
         'langues'    => 'Français',
-        'mission'    => 'Animateur de R2',
+        'mission'    => 'Pilote R2: Executer les contrats',
     ],
     [
         'nom'        => 'Merline KEMCHE',
@@ -95,12 +95,12 @@ $equipe = [
         'mission'    => 'Actrice de R2',
     ],
     [
-        'nom'        => 'Martin M. NGAYA',
-        'role'       => 'Consultant field team',
+        'nom'        => 'MALLON NGAYA Martin',
+        'role'       => 'Consultant Fied Team',
         'photo'      => 'equipe-martin-ngaya.jpg',
-        'experience' => '2 ans et plus',
-        'langues'    => 'Français et anglais',
-        'mission'    => 'Acteur de R2',
+        'experience' => '2ans +',
+        'langues'    => 'Français et Anglais',
+        'mission'    => 'Animateur de R2: Executer les contrats',
     ],
 ];
 ?>
@@ -149,7 +149,7 @@ $equipe = [
 </div>
 </div>
 <div class="rounded-xl overflow-hidden card-elevation-1 reveal delay-200">
-<img alt="L'équipe MDS Market Research lors d'une cérémonie de remise de certificats" class="w-full h-full object-cover" height="605" loading="lazy" src="assets/images/equipe-mds.png" width="897"/>
+<img alt="<?= te("L'équipe MDS Market Research lors d'une cérémonie de remise de certificats") ?>" class="w-full h-full object-cover" height="605" loading="lazy" src="assets/images/equipe-mds.png" width="897"/>
 </div>
 </div>
 </section>
@@ -191,10 +191,27 @@ $equipe = [
 <section class="py-xxl w-full max-w-container-max mx-auto px-gutter">
 <div class="bg-primary rounded-xl overflow-hidden card-elevation-2 relative reveal">
 <div class="relative z-10 p-xl flex flex-col md:flex-row items-center gap-xl">
-<img alt="Certification ISO 20252 délivrée à MDS par Cognicert" class="w-40 h-auto object-contain bg-white rounded-lg p-sm shrink-0" height="605" loading="lazy" src="assets/images/certification-iso-20252.png" width="857"/>
-<div class="text-on-primary">
-<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-md"><?= te("L'Exigence Certifiée : Norme ISO 20252") ?></h2>
+<?php /* Les deux marques partagent la même largeur et le même cartouche blanc :
+         sur un fond bleu nuit, deux fonds clairs de tailles différentes se
+         liraient comme un décalage plutôt que comme une paire. Côte à côte sur
+         mobile, l'une sous l'autre dès que le texte passe à droite.
+
+         La largeur plafonne à 128 px. À 160 px, les deux cartouches et leur
+         écart dépassaient la largeur utile de la carte sur un téléphone de
+         360 px ; et ces marques appuient le propos, elles ne le remplacent
+         pas — c'est le texte qui doit tenir la carte. */ ?>
+<div class="flex flex-row md:flex-col items-center gap-md shrink-0">
+<img alt="<?= te('Certification ISO 20252 délivrée à MDS par Cognicert') ?>" class="w-28 sm:w-32 h-auto object-contain bg-white rounded-lg p-sm" height="605" loading="lazy" src="assets/images/certification-iso-20252.png" width="857"/>
+<img alt="<?= te('MDS est membre de la MSPA, Mystery Shopping Professionals Association') ?>" class="w-28 sm:w-32 h-auto object-contain bg-white rounded-lg p-sm" height="179" loading="lazy" src="assets/images/membre-mspa.png" width="303"/>
+</div>
+<?php /* Deux paragraphes plutôt qu'un : la norme et l'association ne
+         couvrent pas le même terrain, et le second logo restait jusqu'ici
+         sans un mot pour l'expliquer — sa seule légende était son texte de
+         remplacement, que personne ne lit. */ ?>
+<div class="text-on-primary space-y-md">
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg"><?= te("L'Exigence Certifiée : Norme ISO 20252") ?></h2>
 <p class="font-body-md text-body-md opacity-90 max-w-3xl"><?= te("La qualité de nos processus est reconnue internationalement. La certification ISO 20252, spécifique aux études de marché, sociales et d'opinion, atteste de la rigueur de nos méthodologies de collecte, de la sécurité de nos données et de l'intégrité de nos analyses. C'est votre garantie d'une fiabilité sans compromis.") ?></p>
+<p class="font-body-md text-body-md opacity-90 max-w-3xl"><?= te("MDS est également membre de la MSPA, la Mystery Shopping Professionals Association, l'association internationale du client mystère. Cette adhésion engage nos visites mystère sur son code de déontologie et sur les pratiques reconnues de la profession. Les deux références se complètent : la norme encadre nos études, l'association notre terrain mystère.") ?></p>
 </div>
 </div>
 </div>
@@ -207,7 +224,7 @@ $equipe = [
          écrasait le texte, et la même proportion servira aux membres de
          l'équipe pour que la page reste régulière. */ ?>
 <div class="rounded-xl overflow-hidden card-elevation-2 reveal aspect-[4/5] max-w-[280px] w-full">
-<img alt="Simplice NGAMPOU, CEO et fondateur de MDS Market Research" class="w-full h-full object-cover object-top" height="741" loading="lazy" src="assets/images/simplice-ngampou.png" width="858"/>
+<img alt="<?= te('Simplice NGAMPOU, CEO et fondateur de MDS Market Research') ?>" class="w-full h-full object-cover object-top" height="741" loading="lazy" src="assets/images/simplice-ngampou.png" width="858"/>
 </div>
 <div class="space-y-md reveal delay-100">
 <div class="space-y-xs">
@@ -215,9 +232,12 @@ $equipe = [
 <h2 class="font-headline-lg text-headline-lg text-primary">Simplice NGAMPOU</h2>
 </div>
 <div class="space-y-md text-on-surface-variant font-body-md text-body-md">
-<p>MDS est dirigé par <span class="font-semibold text-on-surface">Simplice NGAMPOU</span>, un professionnel chevronné avec plus de <span class="font-semibold text-on-surface">22 ans d'expérience</span> en étude de marché et conseil marketing.</p>
-<p>Titulaire d'un Certificat d'Aptitude en Analyse Quantitative du <span class="italic">Burke Institute (Cincinnati, USA)</span> et d'un Certificat d'Aptitude en Étude de Marché de l'Université de Géorgie (USA), Simplice possède les outils pour apporter des solutions à vos problématiques marketing et stratégiques.</p>
-<p>En tant que pilote du programme M1, <span class="italic">« Developing Strategy and Driving Operational Excellence »</span>, il s'engage à combiner stratégie de haut niveau et exécution opérationnelle de qualité.</p>
+<?php /* Les fragments sont traduits séparément parce que la mise en valeur
+         (`font-semibold`, `italic`) coupe la phrase : le dictionnaire ne
+         contient que du texte, jamais de balisage. Voir `i18n.php`. */ ?>
+<p><?= te('MDS est dirigé par') ?> <span class="font-semibold text-on-surface">Simplice NGAMPOU</span>, <?= te('un professionnel chevronné avec plus de') ?> <span class="font-semibold text-on-surface"><?= te("22 ans d'expérience") ?></span> <?= te('en étude de marché et conseil marketing.') ?></p>
+<p><?= te("Titulaire d'un Certificat d'Aptitude en Analyse Quantitative du") ?> <span class="italic">Burke Institute (Cincinnati, USA)</span> <?= te("et d'un Certificat d'Aptitude en Étude de Marché de l'Université de Géorgie (USA), Simplice possède les outils pour apporter des solutions à vos problématiques marketing et stratégiques.") ?></p>
+<p><?= te('En tant que pilote du programme M1,') ?> <span class="italic"><?= te('« Developing Strategy and Driving Operational Excellence »') ?></span>, <?= te("il s'engage à combiner stratégie de haut niveau et exécution opérationnelle de qualité.") ?></p>
 </div>
 </div>
 </div>
@@ -293,7 +313,7 @@ $equipe = [
 <section class="py-xxl bg-surface-container-low border-t border-surface-variant">
 <div class="w-full max-w-container-max mx-auto px-gutter text-center reveal">
 <h2 class="font-headline-lg text-headline-lg text-primary mb-md"><?= te('Prêt à fiabiliser vos décisions ?') ?></h2>
-<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto mb-lg"><?= te('Contactez notre équipe pour discuter de vos enjeux spécifiques et découvrir comment nos méthodologies peuvent éclairer votre stratégie de développement.') ?></p>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto mb-lg"><?= te('Contacter notre équipe pour échanger sur vos enjeux spécifiques et découvrir comment nos méthodologies peuvent enrichir et orienter votre stratégie de développement.') ?></p>
 <div class="flex flex-col sm:flex-row gap-md justify-center items-center">
 <a class="btn-accent px-lg py-md font-label-md text-label-md card-elevation-1" href="contact.php"><?= te('Contactez-nous') ?></a>
 <a class="btn-contour px-lg py-md font-label-md text-label-md" href="realisations.php"><?= te('Voir nos réalisations') ?></a>

@@ -25,7 +25,15 @@ require_once __DIR__ . '/config.php';
 <a class="block" href="index.php">
 <img alt="<?= e(MDS['nom_long']) ?>" class="h-14 w-auto object-contain" height="171" loading="lazy" src="assets/images/logo-mds-blanc.png" width="243"/>
 </a>
-<img alt="MDS est certifié ISO 20252 — études de marché, sociales et d'opinion" class="h-20 w-auto object-contain bg-white rounded-md p-1 self-start" height="605" loading="lazy" src="assets/images/certification-iso-20252.png" width="857"/>
+<?php /* Les deux marques sont calées sur la même hauteur, pas sur la même
+         largeur : leurs proportions diffèrent, et une largeur commune aurait
+         donné deux cartouches blancs de hauteurs inégales — l'œil lit ici une
+         ligne de base, pas une colonne. `flex-wrap` les empile plutôt que de
+         les écraser quand la colonne du pied de page se resserre. */ ?>
+<div class="flex flex-wrap items-center gap-sm self-start">
+<img alt="<?= te("MDS est certifié ISO 20252 — études de marché, sociales et d'opinion") ?>" class="h-20 w-auto object-contain bg-white rounded-md p-1" height="605" loading="lazy" src="assets/images/certification-iso-20252.png" width="857"/>
+<img alt="<?= te('MDS est membre de la MSPA, Mystery Shopping Professionals Association') ?>" class="h-20 w-auto object-contain bg-white rounded-md p-1" height="179" loading="lazy" src="assets/images/membre-mspa.png" width="303"/>
+</div>
 </div>
 
     <nav aria-label="<?= te('Navigation du pied de page') ?>" class="flex flex-col gap-sm">
@@ -66,7 +74,7 @@ require_once __DIR__ . '/config.php';
 
 <div class="border-t border-on-primary/20">
 <p class="px-gutter py-lg w-full max-w-container-max mx-auto font-label-sm text-label-sm text-on-primary/60 text-center">
-        © <?= date('Y') ?> <?= te('Tous droits réservés') ?> • MDS – <?= e(MDS['nom_long']) ?> • <?= te('Site web produit par') ?> IMAGINE STUDIOS
+        © <?= date('Y') ?> <?= te('Tous droits réservés') ?> • MDS – <?= e(MDS['nom_long']) ?>
     </p>
 </div>
 </footer>

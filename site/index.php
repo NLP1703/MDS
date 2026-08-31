@@ -87,6 +87,10 @@ $actualites = [
 <div><span class="block font-headline-md text-headline-md text-accent">25 000+</span><span class="font-label-sm text-label-sm text-primary-fixed-dim"><?= te('enquêtes par an') ?></span></div>
 <div><span class="block font-headline-md text-headline-md text-accent">640</span><span class="font-label-sm text-label-sm text-primary-fixed-dim"><?= te('agents formés') ?></span></div>
 <div><span class="block font-headline-md text-headline-md text-accent">ISO 20252</span><span class="font-label-sm text-label-sm text-primary-fixed-dim"><?= te('certification') ?></span></div>
+<?php /* « membre » et non « certification » : le macaron MSPA atteste d'une
+         adhésion à l'association, pas d'un audit de conformité. Les deux
+         tuiles se ressemblent, ce qu'elles annoncent ne se vaut pas. */ ?>
+<div><span class="block font-headline-md text-headline-md text-accent">MSPA</span><span class="font-label-sm text-label-sm text-primary-fixed-dim"><?= te('membre') ?></span></div>
 </div>
 </div>
 </div>

@@ -33,10 +33,10 @@ return [
     'Nous trouver'             => 'Find us',
     'Contactez-nous sur WhatsApp'    => 'Contact us on WhatsApp',
     'Lundi à vendredi, 9 h – 17 h'   => 'Monday to Friday, 9 am – 5 pm',
-    'Makepe St Tropez'         => 'Makepe St Tropez',
+    'Makepe Saint Tropez, Résidence city Nikita 1er étage, 2e porte à droite'
+        => 'Makepe Saint Tropez, Résidence City Nikita, 1st floor, 2nd door on the right',
     'Douala, Cameroun'         => 'Douala, Cameroon',
     'Tous droits réservés'     => 'All rights reserved',
-    'Site web produit par'     => 'Website produced by',
     'Passer en anglais'        => 'Switch to English',
     'Passer en français'       => 'Switch to French',
 
@@ -49,6 +49,8 @@ return [
     'enquêtes par an'          => 'surveys per year',
     'agents formés'            => 'trained field agents',
     'certification'            => 'certification',
+    // Adhésion, pas certification — voir le commentaire dans `index.php`.
+    'membre'                   => 'member',
 
     'Stratégies personnalisées'       => 'Tailored strategies',
     'Des stratégies sur-mesure et efficaces'
@@ -130,6 +132,31 @@ return [
     'Voir les actualités'             => 'View all news',
 
     // ─── Page Expertise ─────────────────────────────────────────────────
+    // Les prestations de chaque pôle. « Enquête » se dit « survey » quand il
+    // s'agit du dispositif, « research » quand il s'agit de la discipline.
+    'MDS Distribution & activités sur le Trade' => 'MDS Distribution & Trade Activities',
+
+    'Elaboration des plans marketing stratégique' => 'Strategic marketing plan development',
+    "Enquêtes sur l'usage et l'attitude des consommateurs"
+        => 'Consumer usage and attitude surveys',
+    'Estimation de la taille du marché' => 'Market sizing',
+    'Image de marque & positionnement'  => 'Brand image & positioning',
+    'Segmentation du marché'            => 'Market segmentation',
+    'Mesure de la Relation Client'      => 'Customer relationship measurement',
+
+    'Recensement/Dénombrement des Point de vente' => 'Point-of-sale census and enumeration',
+    'Études de distribution dans les PDV'         => 'In-store distribution studies',
+    'Retail audit'                                => 'Retail audit',
+    'Activités de soutien à la marque dans les PDV' => 'In-store brand support activities',
+
+    "Plan d'échantillonnage"            => 'Sampling plan',
+    'Numérisation des questionnaire et monitoring des sondages'
+        => 'Questionnaire digitisation and survey monitoring',
+    'Pondération et extrapolation des données, tabulation'
+        => 'Data weighting, extrapolation and tabulation',
+    'Test statistique et analyse multivariées'
+        => 'Statistical testing and multivariate analysis',
+
     'Notre Expertise'                 => 'Our Expertise',
     "MDS Market Research déploie 5 pôles d'excellence pour transformer vos données en stratégies actionnables. Une approche institutionnelle alliant rigueur analytique et innovation."
         => 'MDS Market Research operates five centres of excellence to turn your data into actionable strategy — an institutional approach combining analytical rigour with innovation.',
@@ -188,6 +215,40 @@ return [
     'Rapport, tableaux de bord et recommandations actionnables, présentés à vos équipes.'
         => 'Report, dashboards and actionable recommendations, presented to your teams.',
 
+    // Capacités opérationnelles. « Enquêteur » se dit « interviewer » dans le
+    // métier — « investigator » et « surveyor » désignent tout autre chose.
+    'Afrique centrale'                => 'Central Africa',
+    'Nos Capacités Opérationnelles'   => 'Our Operational Capacity',
+    'professionnels'                  => 'professionals',
+
+    'Cameroun'                        => 'Cameroon',
+    '676 enquêteurs et 39 superviseurs' => '676 interviewers and 39 supervisors',
+    '9 villes stratégiques'           => '9 strategic cities',
+    '10 spécialistes dédiés'          => '10 dedicated specialists',
+    "Au Cameroun, nous mobilisons une équipe de 725 professionnels, dont 676 enquêteurs et 39 superviseurs, pour garantir une collecte de données fiable et étendue à travers le pays. Basés dans 9 villes stratégiques, nos experts en traitement des données, localisés à Douala, optimisent chaque jour l'analyse avec 10 spécialistes dédiés. Grâce à cette force opérationnelle, nous assurons des solutions de qualité et adaptées aux besoins de nos partenaires en Afrique centrale."
+        => 'In Cameroon, we field a team of 725 professionals, including 676 interviewers and 39 supervisors, to deliver reliable data collection across the country. Based in 9 strategic cities, our data processing experts in Douala refine the analysis daily with 10 dedicated specialists. This operational strength allows us to deliver quality solutions tailored to the needs of our partners in Central Africa.',
+
+    'RDC'                             => 'DRC',
+    '215 enquêteurs et 36 superviseurs' => '215 interviewers and 36 supervisors',
+    '9 localités stratégiques'        => '9 strategic locations',
+    '12 coordonateurs régionaux & 7 agents de terrain sénior'
+        => '12 regional coordinators & 7 senior field agents',
+    "En République Démocratique du Congo (RDC), nous mobilisons une équipe de 270 professionnels, dont 215 enquêteurs et 36 superviseurs, répartis dans 9 localités clés. Ces équipes sont appuyées par 12 coordinateurs régionaux et 7 agents de terrain senior pour garantir une collecte de données efficace et fiable. Avec des opérations centralisées à Kinshasa et des ressources réparties dans des villes comme Lubumbashi, Kisangani et Goma, nous assurons une couverture nationale et des solutions adaptées aux besoins de nos partenaires en Afrique centrale."
+        => 'In the Democratic Republic of the Congo (DRC), we field a team of 270 professionals, including 215 interviewers and 36 supervisors, spread across 9 key locations. These teams are backed by 12 regional coordinators and 7 senior field agents to ensure efficient, reliable data collection. With operations centralised in Kinshasa and resources distributed across cities such as Lubumbashi, Kisangani and Goma, we provide nationwide coverage and solutions tailored to the needs of our partners in Central Africa.',
+
+    'Tchad'                           => 'Chad',
+    '106 enquêteurs et 19 superviseurs' => '106 interviewers and 19 supervisors',
+    '9 localités clés'                => '9 key locations',
+    '10 coordonnateurs régionaux & 1 expert' => '10 regional coordinators & 1 expert',
+    "Au Tchad, nous mobilisons une équipe de 136 professionnels, dont 106 enquêteurs et 19 superviseurs, pour garantir une collecte de données fiable à travers le pays. Basés dans 9 localités clés, nos équipes, appuyées par 10 coordinateurs régionaux et un expert en contrôle qualité, assurent une couverture optimale et une maîtrise des spécificités locales. Grâce à cette organisation, nous fournissons des solutions adaptées et de haute qualité pour répondre aux besoins de nos partenaires en Afrique centrale."
+        => 'In Chad, we field a team of 136 professionals, including 106 interviewers and 19 supervisors, to deliver reliable data collection across the country. Based in 9 key locations, our teams — supported by 10 regional coordinators and a quality control expert — ensure optimal coverage and a firm grasp of local specifics. This structure lets us deliver high-quality solutions tailored to the needs of our partners in Central Africa.',
+
+    'Gabon'                           => 'Gabon',
+    '50 enquêteurs et 10 superviseurs' => '50 interviewers and 10 supervisors',
+    'Libreville et Franceville'       => 'Libreville and Franceville',
+    "Au Gabon, nous disposons d'une équipe dédiée de 60 professionnels, incluant 50 enquêteurs et 10 superviseurs, opérant depuis Libreville et Franceville. Nos collaborateurs locaux maîtrisent parfaitement le terrain et les spécificités culturelles et linguistiques de chaque province. Avec des recherches qualitatives et quantitatives sur mesure, nous garantissons des données fiables pour des décisions éclairées."
+        => 'In Gabon, we have a dedicated team of 60 professionals, including 50 interviewers and 10 supervisors, operating out of Libreville and Franceville. Our local staff know the ground thoroughly, along with the cultural and linguistic specifics of each province. Through bespoke qualitative and quantitative research, we guarantee reliable data for informed decisions.',
+
     'Notre Équipe'                    => 'Our Team',
     "Une équipe d'experts passionnés, dédiée à transformer vos données en leviers de croissance stratégique."
         => 'A team of dedicated experts, turning your data into levers for strategic growth.',
@@ -226,6 +287,10 @@ return [
         => 'The quality of our processes is internationally recognised. ISO 20252 certification, specific to market, social and opinion research, attests to the rigour of our collection methods, the security of our data and the integrity of our analysis. It is your guarantee of uncompromising reliability.',
     'Certification ISO 20252 délivrée à MDS par Cognicert'
         => 'ISO 20252 certification awarded to MDS by Cognicert',
+    'MDS est membre de la MSPA, Mystery Shopping Professionals Association'
+        => 'MDS is a member of the MSPA, Mystery Shopping Professionals Association',
+    "MDS est également membre de la MSPA, la Mystery Shopping Professionals Association, l'association internationale du client mystère. Cette adhésion engage nos visites mystère sur son code de déontologie et sur les pratiques reconnues de la profession. Les deux références se complètent : la norme encadre nos études, l'association notre terrain mystère."
+        => "MDS is also a member of the MSPA, the Mystery Shopping Professionals Association, the international body for mystery shopping. That membership binds our mystery visits to its code of ethics and to the profession's recognised practice. The two credentials complement one another: the standard governs our research, the association our mystery fieldwork.",
     "MDS est certifié ISO 20252 — études de marché, sociales et d'opinion"
         => 'MDS is ISO 20252 certified — market, social and opinion research',
 
@@ -239,6 +304,9 @@ return [
     "et d'un Certificat d'Aptitude en Étude de Marché de l'Université de Géorgie (USA), Simplice possède les outils pour apporter des solutions à vos problématiques marketing et stratégiques."
         => 'and a Certificate of Proficiency in Market Research from the University of Georgia (USA), Simplice has the tools to address your marketing and strategic challenges.',
     "En tant que pilote du programme M1,"    => 'As lead of the M1 programme,',
+    // Le nom du programme est déjà anglais : seuls les guillemets changent.
+    '« Developing Strategy and Driving Operational Excellence »'
+        => '“Developing Strategy and Driving Operational Excellence”',
     "il s'engage à combiner stratégie de haut niveau et exécution opérationnelle de qualité."
         => 'he is committed to combining high-level strategy with quality operational execution.',
 
@@ -256,33 +324,40 @@ return [
     'Responsable administration & finances' => 'Head of Administration & Finance',
     'Project Manager'                 => 'Project Manager',
     'Concepteur de scripts & analyste de données' => 'Script Developer & Data Analyst',
-    "Responsable de l'intégrité du système de management qualité"
+    "Responsable de l'intégrité du Système de Management Qualité"
         => 'Quality Management System Integrity Officer',
-    'Responsable du contrôle qualité — cartographe' => 'Quality Control Manager — Cartographer',
+    'Responsable du Contrôle Qualité - Cartographe'
+        => 'Quality Control Manager - Cartographer',
     'Analyste'                        => 'Analyst',
-    'Consultant field team'           => 'Field Team Consultant',
-    '10 ans et plus'                  => '10+ years',
-    '15 ans et plus'                  => '15+ years',
+    'Consultant Fied Team'            => 'Field Team Consultant',
+    '10 ans +'                        => '10+ years',
+    '15 ans +'                        => '15+ years',
     '8 ans et plus'                   => '8+ years',
     '4 ans et plus'                   => '4+ years',
-    '3 ans et plus'                   => '3+ years',
+    '3 ans +'                         => '3+ years',
     '2 ans et plus'                   => '2+ years',
+    '2ans +'                          => '2+ years',
     'Français'                        => 'French',
+    'Français et Anglais'             => 'French and English',
     'Français et anglais'             => 'French and English',
-    "Pilote de R1 — prospecter, traiter les appels d'offres et conclure les contrats"
-        => 'R1 lead — prospecting, handling tenders and closing contracts',
+    "Pilote de R1 : Prospecter, Traiter les Appels d'offre et conclure les contrats"
+        => 'R1 lead: prospecting, handling tenders and closing contracts',
     'Acteur de R1'                    => 'R1 contributor',
-    'Actrice de R1'                   => 'R1 contributor',
+    "Animatrice R1: Prospecter, Traiter les Appels d'offres et conclure les contrats"
+        => 'R1 facilitator: prospecting, handling tenders and closing contracts',
     'Pilote de R3 — facturer, encaisser et recouvrer'
         => 'R3 lead — invoicing, collection and recovery',
     'Pilote de S1 — gérer les ressources' => 'S1 lead — resource management',
-    'Animateur de R2'                 => 'R2 facilitator',
-    'Acteur de R2'                    => 'R2 contributor',
+    'Pilote R2: Executer les contrats' => 'R2 lead: contract execution',
+    'Animateur de R2: Executer les contrats'
+        => 'R2 facilitator: contract execution',
+    "Animatrice M1: Elaborer la Stratégie et Piloter L'excellence Opérationnelle"
+        => 'M1 facilitator: strategy development and operational excellence',
     'Actrice de R2'                   => 'R2 contributor',
 
     'Prêt à fiabiliser vos décisions ?' => 'Ready to make your decisions dependable?',
-    "Contactez notre équipe pour discuter de vos enjeux spécifiques et découvrir comment nos méthodologies peuvent éclairer votre stratégie de développement."
-        => 'Contact our team to discuss your specific challenges and see how our methodology can inform your growth strategy.',
+    'Contacter notre équipe pour échanger sur vos enjeux spécifiques et découvrir comment nos méthodologies peuvent enrichir et orienter votre stratégie de développement.'
+        => 'Talk to our team about your specific challenges and see how our methodology can enrich and steer your growth strategy.',
     'Contactez-nous'                  => 'Contact us',
     'Voir nos réalisations'           => 'View our case studies',
     "L'équipe MDS Market Research lors d'une cérémonie de remise de certificats"
@@ -307,8 +382,11 @@ return [
         => 'The sheet for this case study is not available yet.',
 
     // ─── Page Actualités ────────────────────────────────────────────────
-    'MDS : alliez actualité et recherches approfondies pour anticiper les changements du marché.'
-        => 'MDS: combine current affairs with in-depth research to anticipate market shifts.',
+    // À ne pas confondre avec la variante sans point final, plus haut : celle-ci
+    // est le chapeau de la page Actualités, l'autre le titre de la section de
+    // l'accueil. Deux phrases voisines, deux entrées distinctes.
+    "Allier l'actualité aux recherches approfondies afin d'anticiper efficacement les évolutions du marché."
+        => 'Combining current affairs with in-depth research to anticipate market shifts effectively.',
     'Chargement des actualités…'      => 'Loading news…',
     'Aucune actualité dans cette catégorie.' => 'No news in this category.',
     'Actualités indisponibles'        => 'News unavailable',
